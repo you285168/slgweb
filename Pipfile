@@ -7,11 +7,11 @@ verify_ssl = true
 
 [packages]
 django = "==2.2.3"
-mysqlclient = {path = "./packages/mysqlclient-1.4.6-cp36-cp36m-win32.whl"}
 python-memcached = "*"
 requests = "*"
 geoip2 = "*"
 werkzeug = "*"
+mysqlclient = "==1.4.6"
 
 [requires]
 python_version = "3.6"

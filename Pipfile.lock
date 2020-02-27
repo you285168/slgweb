@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "dc81745465ee51aa2224530adfbe872e5efea8650c603b8de7ed3a8feb76631f"
+            "sha256": "f8d4e712e7b311f85706454fa7c30718908ea94dbf4148b4ce4fd820dbe1f110"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -61,13 +61,12 @@
         },
         "mysqlclient": {
             "hashes": [
-                "sha256:1ab203fa4944b49fc396743789ec785aeeb350bdd496999552de3aaf5a70b86b",
                 "sha256:4c82187dd6ab3607150fbb1fa5ef4643118f3da122b8ba31c3149ddd9cf0cb39",
                 "sha256:9e6080a7aee4cc6a06b58b59239f20f1d259c1d2fddf68ddeed242d2311c7087",
                 "sha256:f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16",
                 "sha256:f646f8d17d02be0872291f258cce3813497bc7888cd4712a577fd1e719b2f213"
             ],
-            "path": "./packages/mysqlclient-1.4.6-cp36-cp36m-win32.whl",
+            "index": "pypi",
             "version": "==1.4.6"
         },
         "python-memcached": {
