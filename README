@@ -1,0 +1,14 @@
+Nginx+Gunicorn+Supervisor 部署 Django
+
+安装python3.6
+安装可能的依赖
+yum install -y openssl-devel bzip2-devel expat-devel gdbm-devel readline-devel sqlite-devel
+下载源码
+wget https://www.python.org/ftp/python/3.6.4/Python-3.6.4.tgz
+tar -zxvf Python-3.6.4.tgz
+cd Python-3.6.4
+./configure LD_RUN_PATH=/usr/local/lib LDFLAGS="-L/usr/local/lib" CPPFLAGS="-I/usr/local/include"
+make LD_RUN_PATH=/usr/local/lib
+make install
+
+也可通过Anaconda安装python3.6

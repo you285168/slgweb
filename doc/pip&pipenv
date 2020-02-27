@@ -1,0 +1,39 @@
+pip install package_name                #安装包
+pip uninstall package_name              #卸载包
+pip install --upgrade package_name      #升级包
+pip list                                #查看已安装的包
+python -m pip install --upgrade pip     #更新pip版本
+
+pip安装时Read timed out处理：
+1、延长timeout时间
+pip --default-timeout=100 install 要安装的包
+2、换源，将pip源更换到国内镜像
+（1）阿里云 http://mirrors.aliyun.com/pypi/simple/
+（2）豆瓣http://pypi.douban.com/simple/
+（3）清华大学 https://pypi.tuna.tsinghua.edu.cn/simple/
+（4）中国科学技术大学 http://pypi.mirrors.ustc.edu.cn/simple/
+（5）华中科技大学http://pypi.hustunique.com/
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple 要安装的包
+
+
+用pipenv安装虚拟环境
+创建虚拟环境：
+cd project1
+pipenv install
+pipenv命令更新包依赖并同时生成了Pipfile 和Pipfile.lock文件（包依赖关系），创建了虚拟环境
+Pipfile中的[[source]]可以更改为国内源
+
+激活虚拟环境：
+pipenv shell
+
+退出虚拟环境：
+exit
+
+安装和卸载第三方库
+pipenv install gcp
+pipenv uninstall gcp
+
+线上环境部署：
+pipenv install --deploy --ignore-pipfile
+--deploy 参数，Pipenv 将只会安装 Pipfile 中 [packages] 下指定的依赖。因为我们现在是在线上环境进行部署，仅用于开发环境的相关依赖我们并不需要。
+--ignore-pipfile 将会使 Pipenv 从 Pipfile.lock 文件中安装项目依赖。Pipfile.lock 记录了项目依赖的精确信息，从这里读取依赖信息能够确保依赖信息被无意中修改或者破坏而使得运行环境因为依赖包的缘故出现不可预料的问题。

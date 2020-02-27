@@ -1,0 +1,45 @@
+到官网（https://www.anaconda.com/distribution/）下载安装包进行安装
+conda update -n base conda        //update最新版本的conda
+conda create -n xxxx python=3.6   //创建python3.6的xxxx虚拟环境
+conda remove -n xxxx --all        //删除xxxx虚拟环境
+activate xxxx                     #激活xxxx虚拟环境 for Windows
+source activate xxxx              #激活xxxx虚拟环境 for Linux & Mac
+deactivate python34               #退出虚拟环境 for Windows
+source deactivate python34        #退出虚拟环境 for Linux & Mac
+conda env list                    //显示所有的虚拟环境
+conda list                        #查看已经安装的文件包
+conda update xxx                  #更新xxx文件包
+conda uninstall xxx               #卸载xxx文件包
+conda clean -p                    //删除没有用的包，这个命令会检查哪些包没有在包缓存中被硬依赖到其他地方，并删除它们。
+conda clean -t                    //将conda保存下来的tar包
+
+
+anaconda conda 默认使用国外的服务器，下载会很慢，切换为国内源
+windows下
+命令行中直接使用以下命令
+清华大学的源
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/
+中科大的源：
+conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/
+conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/
+conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/
+conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/
+conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/
+conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
+
+# 设置搜索时显示通道地址
+conda config --set show_channel_urls yes
+
+Linux下
+将以上配置文件写在~/.condarc中 
+vim ~/.condarc
+
+channels:
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/main/
+  - https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+  - defaults
+show_channel_urls: true
+--------------------- 

@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django = "==2.2.3"
+mysqlclient = {path = "./packages/mysqlclient-1.4.6-cp36-cp36m-win32.whl"}
+python-memcached = "*"
+requests = "*"
+geoip2 = "*"
+werkzeug = "*"
+
+[requires]
+python_version = "3.6"
