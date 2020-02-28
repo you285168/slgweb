@@ -12,6 +12,7 @@ requests = "*"
 geoip2 = "*"
 werkzeug = "*"
 mysqlclient = "==1.4.6"
+gunicorn = "*"
 
 [requires]
 python_version = "3.6"
