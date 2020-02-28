@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import WebAccount, LockIP
+from .models import WebAccount
 from .account import *
 from django.utils.safestring import mark_safe
 from django.shortcuts import get_object_or_404, redirect
