@@ -3,3 +3,4 @@ __pycache__
 *.log
 *.log.*
 000*
+*_credentials*
