@@ -35,19 +35,8 @@ server {
 service restart nginx
 
 
-使用Gunicorn
-Gunicorn是一个unix上被广泛使用的高性能的Python WSGI UNIX HTTP Server。
-pipenv install gunicorn
-pipenv run gunicorn blogproject.wsgi -w 2 -k gthread -b 127.0.0.1:8000
--w 2 表示启动 2 个 worker 用于处理请求（一个 worker 可以理解为一个进程），通常将 worker 数目设置为 CPU 核心数的 2-4 倍
--k gthread 指定每个 worker 处理请求的方式，根据大家的实践，指定为 gthread 的异步模式能获取比较高的性能，因此我们采用这种模式。
-
-
-使用fabric自动化部署
-pipenv run fab -H server_ip --prompt-for-login-password -p deploy
-
-
 django
+django配置文件设置为
 setting.py指定ALLOWED_HOSTS的值
 DEBUG=False         #关闭 DEBUG 模式
 pipenv run python manage.py collectstatic       #收集静态文件

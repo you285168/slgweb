@@ -1,0 +1,86 @@
+使用 Fabric 可以在服务器中自动执行命令。因为整个代码部署过程都是相同的，只要我们用 Fabric 写好部署脚本，以后就可以通过运行脚本自动完成部署了。
+
+首先在本地安装 Fabric：
+$ pipenv install fabric --dev
+因为 Fabric 只需在本地使用，因此使用 --dev 选项，让 Pipenv 将 Fabric 依赖写到 dev-packages 配置下，线上环境就不会安装 Fabric。
+
+为了安全，线上环境我们将 debug 改为了 False，但开发环境要改为 True，改来改去将很麻烦。此外，django 的 SECRET_KEY 是很私密的配置，django 的很多安全机制都依赖它，
+https://www.miniwebtool.com/django-secret-key-generator/ 这个网站可以自动生成 SECRET_KEY
+如果不慎泄露，网站将面临巨大安全风险，像我们现在这样直接写在配置文件中，万一不小心公开了源代码，SECRET_KEY 就会直接泄露，好的实践是将这个值写入环境变量，通过从环境变量取这个值。
+解决以上问题的一个方案就是拆分 settings.py 文件，不同环境对应不同的 settings 文件，django 在启动时会从环境变量中读取 DJANGO_SETTINGS_MODULE 的值，以这个值指定的文件作为应用的最终配置。
+manage.py里的DJANGO_SETTINGS_MODULE为开发环境配置
+wsgi.py里的DJANGO_SETTINGS_MODULE为线上环境配置
+
+编写 Fabric 脚本
+Fabric 脚本通常位于 fabfile.py 文件里，因此先在项目根目录下建一个 fabfile.py 文件。
+
+根据上述过程编写的脚本代码如下：
+
+from fabric import task
+from invoke import Responder
+from _credentials import github_username, github_password
+
+
+def _get_github_auth_responders():
+    """
+    返回 GitHub 用户名密码自动填充器
+    """
+    username_responder = Responder(
+        pattern="Username for 'https://github.com':",
+        response='{}\n'.format(github_username)
+    )
+    password_responder = Responder(
+        pattern="Password for 'https://{}@github.com':".format(github_username),
+        response='{}\n'.format(github_password)
+    )
+    return [username_responder, password_responder]
+
+
+@task()
+def deploy(c):
+    supervisor_conf_path = '~/etc/'
+    supervisor_program_name = 'hellodjango-blog-tutorial'
+
+    project_root_path = '~/apps/HelloDjango-blog-tutorial/'
+
+    # 先停止应用
+    with c.cd(supervisor_conf_path):
+        cmd = 'supervisorctl stop {}'.format(supervisor_program_name)
+        c.run(cmd)
+
+    # 进入项目根目录，从 Git 拉取最新代码
+    with c.cd(project_root_path):
+        cmd = 'git pull'
+        responders = _get_github_auth_responders()
+        c.run(cmd, watchers=responders)
+
+    # 安装依赖，迁移数据库，收集静态文件
+    with c.cd(project_root_path):
+        c.run('pipenv install --deploy --ignore-pipfile')
+        c.run('pipenv run python manage.py migrate')
+        c.run('pipenv run python collectstatic --noinput')
+
+    # 重新启动应用
+    with c.cd(supervisor_conf_path):
+        cmd = 'supervisorctl start {}'.format(supervisor_program_name)
+        c.run(cmd)
+
+
+来分析一下部署代码。
+deploy 函数为部署过程的入口，加上 task 装饰器将其标注为一个 fabric 任务。
+然后定义了一些项目相关的变量，主要是应用相关代码和配置所在服务器的路径。
+deploy 函数被调用时会传入一个 c 参数，这个参数的值是 Fabric 在连接服务器时创建的 ssh 客户端实例，使用这个实例可以在服务器上运行相关命令。
+接着就是执行一系列部署命令了，进入某个目录使用 ssh 客户端实例的 cd 方法，运行命令使用 run 方法。
+需要注意的是，每次 ssh 客户端实例执行新的命令是无状态的，即每次都会在服务器根目录执行新的命令，而不是在上一次执行的命令所在目录，所以要在同一个目录下连续执行多条命令，需要使用 with c.cd 上下文管理器。
+最后，如果服务器没有加入代码仓库的信任列表，运行 git pull 一般会要求输入密码。我们代码托管使用了 GitHub，所以写了一个 GitHub 账户密码响应器，一旦 Fabric 检测到需要输入 GitHub 账户密码，就会调用这个响应器，自动填写账户密码。
+由于响应器从 _credentials.py 模块导入敏感信息，因此在 fabfile.py 同级目录新建一个 _credentials.py文件，写上 GitHub 的用户名和密码：
+github_username = 'your-github-username'
+github_password = 'your-github-password'
+当然，这个文件包含账户密码等敏感信息，所以一定记得将这个文件加入 .gitignore 文件，将其排除在版本控制系统之外，别一不小心提交了公开仓库，导致个人 GitHub 账户泄露。
+
+执行 Fabric 自动部署脚本
+进入 fabfile.py 文件所在的目录，用 fab 命令运行这个脚本文件（将 server_ip 换为你线上服务器的 ip 地址）：
+pipenv run fab -H root@server_ip --prompt-for-login-password -p deploy
+这时 Fabric 会自动检测到 fabfile.py 脚本中的 deploy 函数并运行，输入服务器登录密码后回车，然后你会看到命令行输出了一系列字符串，最后看到部署完毕的消息。
+
+如果脚本运行中出错，检查一下命令行输出的错误信息，修复问题后重新运行脚本即可。以后当你在本地开发完相关功能后，只需要执行这一个脚本文件，就可以自动把最新代码部署到服务器了。

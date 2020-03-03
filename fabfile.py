@@ -20,6 +20,10 @@ def _get_github_auth_responders():
 
 @task()
 def deploy(c):
+    """
+    :param c: 这个参数的值是 Fabric 在连接服务器时创建的 ssh 客户端实例，使用这个实例可以在服务器上运行相关命令
+    :return:
+    """
     supervisor_conf_path = '/home/slgweb/'
     supervisor_program_name = 'wasteland'
 

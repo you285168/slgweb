@@ -51,6 +51,7 @@ autorestart=unexpected
 user=yangxg
 stdout_logfile=/home/gjg/etc/supervisor/var/log/wasteland-stdout.log
 stderr_logfile=/home/gjg/etc/supervisor/var/log/wasteland-stderr.log
+environment=DJANGO_SECRET_KEY="ff6h42^=o)xwa)hq!62j!)b8f%qn+*nl$6ooc@@k-)w%7ycj83"
 
 说一下各项配置的含义：
 [program:wasteland] 指明运行应用的进程，名为 wasteland
@@ -60,6 +61,7 @@ autostart 随 Supervisor 启动自动启动进程。
 autorestart 进程意外退出时重启。
 user 进程运行的用户，防止权限问题。
 stdout_logfile，stderr_logfile 日志输出文件。
+environment 环境变量，多个环境变量用逗号隔开
 
 启动 Supervisor
 supervisord -c ~/etc/supervisord.conf
@@ -67,4 +69,9 @@ supervisord -c ~/etc/supervisord.conf
 
 进入 supervisorctl 进程管理控制台：
 supervisorctl -c ~/etc/supervisord.conf
-执行 update 命令更新配置文件并启动应用。
+update                  #命令更新配置文件并启动应用。
+reload                  #重新启动配置中的所有程序
+start program_name      #启动某个进程(program_name=你配置中写的程序名称)
+stop program_name       #停止某一进程 (program_name=你配置中写的程序名称)
+restart program_name    #重启某一进程 (program_name=你配置中写的程序名称)
+stop all                #停止全部进程
