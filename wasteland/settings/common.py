@@ -68,22 +68,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'wasteland.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        # 配置使用mysql
-        'ENGINE': 'django.db.backends.mysql',     # 数据库产品
-        'HOST': "127.0.0.1",               # 数据库ip
-        'PORT': 3306,                          # 数据库端口
-        'USER': "root",                        # 用户名
-        'PASSWORD': "123456",        # 密码
-        'NAME': "pyweb",                       # 数据库名
-    },
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
