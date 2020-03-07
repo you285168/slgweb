@@ -67,6 +67,18 @@ def get_cache_account(**kwargs):
     return data
 
 
+def _get_sid_key(uid):
+    return 'lastsid' + uid
+
+
+def get_last_sid(uid):
+    cachekey = _get_sid_key(uid)
+    sid = cache.get(cachekey)
+    if not sid:
+        sid = 1
+    return sid
+
+
 def is_lock_ip(ip):
     ips = get_lock_ip()
     if ips:

@@ -118,18 +118,19 @@ def user_login(request):
 
 def _get_account_server(account, clientos, country):
     login = get_login_config(LOGIN_ID)
+    '''
     res = requests.get('http//{0}:{1}'.format(login['http_host'], login_http_port(login['id'])), params={
         'account': account,
         'clientos': clientos,
         'country': country,
     })
     sid = int(res.content)
+    '''
+    sid = get_last_sid(account)
     game = get_game_config(sid)
     return {
         'serverid': game['id'],
         'ip': login['network_ip'],
         'port': login['network_port'],
         'status': game['status'],
-        'resver': game['resver'],
-        'appver': game['appver'],
     }

@@ -23,7 +23,7 @@ class GameConfigAdmin(admin.ModelAdmin):
     list_per_page = 50
 
     # ordering设置默认排序字段，负号表示降序排序
-    ordering = ('-id',)
+    ordering = ('id',)
 
     # list_editable 设置默认可编辑字段
     list_editable = ['dbc_player', 'network_ip', 'network_port', 'arenaid', 'world']
@@ -96,7 +96,6 @@ class GameConfigAdmin(admin.ModelAdmin):
         """函数实现复制本条数据，并跳转到新复制的数据的修改页面"""
         obj = get_object_or_404(GameConfig, pk=kwargs['pk'])
         old_data = model_to_dict(obj)
-        print(old_data)
         old_data.pop('id')
         old_data.pop('dbc_player')
         old_data['dbc_log'] = DBConfig.objects.get(pk=old_data['dbc_log'])
