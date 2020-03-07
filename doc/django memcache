@@ -1,0 +1,29 @@
+django使用memcache缓存
+windows:
+[./extend/memcached/windows/]memcached -p 11211 -l 127.0.0.1 -m 1024
+cmd窗口不关闭即可为开发环境提供服务
+linux:
+yum install libevent libevent-devel
+yum install memcached
+memcached -p11211 -m1024m -d -unginx
+-m是分配给Memcache使用的内存数量，单位是MB
+-d是启动一个守护进程
+-p是设置Memcache监听的端口，，最好是1024以上的端口
+-l是监听的服务器IP地址，可以有多个地址
+-c是最大运行的并发连接数，默认是1024
+-P是设置保存Memcache的pid文件
+-u是运行Memcache的用户
+
+
+telnet 127.0.0.1 11211      #连接
+
+stats items                 #列出所有key
+STAT items:7:number 1
+STAT items:7:age 188
+END
+
+stats cachedump 7 0         #通过过itemid获取key
+ITEM game1 [183 b; 1394527347 s]
+END
+
+get game1                   #通过get获取key值

@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from .platform import platform_verify, FEIYU_KEY
 import logging
 from .account import *
-from common import get_ip, md5_sign, get_country_code, create_uuid
+from common import get_client_ip, md5_sign, get_country_code, create_uuid
 import time
 from .models import WebAccount
 import requests
@@ -72,7 +72,7 @@ def user_login(request):
     email = request.GET.get('email', None)
     clientos = request.GET.get('clientos', None)
     subplatform = request.GET.get('subplatform', None)
-    ip = get_ip(request)
+    ip = get_client_ip(request)
 
     code = 0
     result = None

@@ -1,0 +1,25 @@
+安装nginx
+yum install epel-release -y
+yum install nginx -y
+
+Nginx 的配置
+/etc/nginx/conf.d/ 目录下新增slgweb.conf
+server {
+    charset utf-8;
+    listen 80;
+    server_name slgweb.com;
+
+    location /static {
+        alias /home/slgweb/static;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_set_header        REMOTE_ADDR     $remote_addr;                           #设置反向代理ip
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;             #设置反向代理ip request中找不到HTTP_X_FORWARDED_FOR
+        real_ip_recursive on;
+    }
+}
+service restart nginx
