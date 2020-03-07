@@ -19,7 +19,7 @@ def get_country_code(ip):
         response = reader.country(ip)
         code = response.country.iso_code
     except Exception as e:
-        logger.error('geoip2 error: {0}'.format(str(e)))
+        logger.error('geoip2 error: {0} remote{1} forward{2}'.format(str(e), global_request.META.get('REMOTE_ADDR'), global_request.META.get('HTTP_X_FORWARDED_FOR')))
     return code
 
 
