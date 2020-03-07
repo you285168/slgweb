@@ -22,7 +22,7 @@ class CountryConfig(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plural = "国家"
+        verbose_name_plural = "————"
 
 
 class LoginWeight(models.Model):
@@ -31,7 +31,7 @@ class LoginWeight(models.Model):
     country = models.ManyToManyField(CountryConfig, verbose_name='国家')
 
     class Meta:
-        verbose_name_plural = "权重组"
+        verbose_name_plural = "————"
 
     # 国家列表
     def country_list(self):

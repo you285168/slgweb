@@ -17,7 +17,7 @@ class GameConfigAdmin(admin.ModelAdmin):
     list_display_links = ('id',)
 
     # listdisplay设置要显示在列表中的字段（id字段是Django模型的默认主键）
-    list_display = ('id', 'world', 'login', 'colored_status', 'network_ip', 'network_port', 'http_host', 'dbc_log', 'copy_current_data')
+    list_display = ('id', 'world', 'login', 'colored_status', 'network_ip', 'network_port', 'http_host', 'dbc_player', 'arenaid', 'copy_current_data')
 
     # list_per_page设置每页显示多少条记录，默认是100条
     list_per_page = 50
@@ -26,7 +26,7 @@ class GameConfigAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
     # list_editable 设置默认可编辑字段
-    list_editable = ['dbc_log', 'network_ip', 'network_port']
+    list_editable = ['dbc_player', 'network_ip', 'network_port', 'arenaid', 'world']
 
     # fk_fields 设置显示外键字段
     # fk_fields = ('dbc_log',)

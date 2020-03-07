@@ -58,8 +58,6 @@ class GameConfig(models.Model):
     arenaid = models.IntegerField(default=0)
     trailnotice = models.DateTimeField(blank=True, null=True)
     servername = models.CharField(max_length=64, default='')
-    resver = models.CharField(max_length=64)
-    appver = models.CharField(max_length=64)
     world = models.ForeignKey(WorldConfig, on_delete=models.PROTECT)
     login = models.ForeignKey(LoginConfig, on_delete=models.PROTECT)
 
