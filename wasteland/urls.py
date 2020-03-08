@@ -22,5 +22,5 @@ urlpatterns = [
     path('server/', include('serverconf.urls')),
     path('weight/', include('serverweight.urls')),
     path('account/', include('webaccount.urls')),
-#    path('charge/', include('charge.urls')),
+    path('charge/', include('charge.urls')),
 ]

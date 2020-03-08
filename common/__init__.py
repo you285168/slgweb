@@ -7,6 +7,8 @@ from django.db.models.fields.related import ManyToManyField, ForeignKey
 import geoip2.database
 import logging
 import uuid
+from django.core.cache import cache
+from django.db import models
 
 reader = geoip2.database.Reader('./extend/GeoLite2-Country.mmdb')
 logger = logging.getLogger('wasteland')
@@ -97,3 +99,4 @@ def get_admin_url(request):
 
 def get_url_params():
     return _get_request_params(global_request)
+

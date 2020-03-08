@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'serverweight',
     'common',
     'webaccount',
+    'charge',
 ]
 
 MIDDLEWARE = [

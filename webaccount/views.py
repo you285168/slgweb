@@ -4,9 +4,10 @@ from django.http import HttpResponse
 from .platform import platform_verify, FEIYU_KEY
 import logging
 from .account import *
-from common import get_client_ip, md5_sign, get_country_code, create_uuid
+from common import get_client_ip, md5_sign, get_country_code
 import time
 from .models import WebAccount
+from django.core.exceptions import ObjectDoesNotExist
 import requests
 from serverconf.interface import get_login_config, login_http_port, get_game_config
 
@@ -25,8 +26,15 @@ def account_test(request):
     return HttpResponse('')
 
 
-def server_user_login(request):
-    pass
+def enter_game(request):
+    uid = request.GET.get('account', None)
+    sid = request.GET.get('serverid', None)
+    data = get_cache_account(uid=uid)
+    platform = {}
+    if data:
+        set_last_sid(uid, sid)
+        platform = data['platform']
+    return JsonResponse(platform)
 
 
 def bind_account(request):
@@ -41,11 +49,13 @@ def bind_account(request):
         if not key:
             code = 3
             break
-        objs = WebAccount.objects.filter(uid=uid)
-        if len(objs) == 0:
+        try:
+            obj = WebAccount.objects.get(uid=uid)
+        except ObjectDoesNotExist:
+            obj = None
+        if not obj:
             code = 4
             break
-        obj = objs[0]
         if getattr(obj, platform, '') != '':
             code = 2
             break

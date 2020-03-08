@@ -18,3 +18,4 @@ class ChargeOrder(models.Model):
 
     class Meta:
         verbose_name_plural = "充值"
+        unique_together = ('platform', 'order_id',)

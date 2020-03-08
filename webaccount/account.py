@@ -79,6 +79,11 @@ def get_last_sid(uid):
     return sid
 
 
+def set_last_sid(uid, sid):
+    cachekey = _get_sid_key(uid)
+    cache.set(cachekey, sid, None)
+
+
 def is_lock_ip(ip):
     ips = get_lock_ip()
     if ips:

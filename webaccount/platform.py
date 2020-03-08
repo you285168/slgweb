@@ -12,6 +12,8 @@ PLATFORM_CACHE_TIME = 15 * 24 * 60 * 60
 PLATFORM = ('gamecenter', 'googleplay', 'facebook', 'feiyu', 'xindong')
 FEIYU_KEY = 'bdc96026c4fb2bdbe86cf2c29aaf39c9'
 FEIYU_ID = '10029'
+XINDONG_KEY = 'd013b9dfe96ab8396f45070fae87653d'
+XINDONG_ID = '161414'
 
 
 def platform_verify(platform, signture, subplatform, email):
