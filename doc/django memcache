@@ -2,6 +2,8 @@ django使用memcache缓存
 windows:
 [./extend/memcached/windows/]memcached -p 11211 -l 127.0.0.1 -m 1024
 cmd窗口不关闭即可为开发环境提供服务
+
+
 linux:
 yum install libevent libevent-devel
 yum install memcached

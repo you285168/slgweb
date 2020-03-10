@@ -10,6 +10,8 @@ from serverconf.interface import get_game_config, game_http_port
 import requests
 from django.http import HttpResponse
 from django.core.cache import cache
+import json
+from django.http.response import JsonResponse
 
 logger = logging.getLogger('wasteland')
 
@@ -33,14 +35,14 @@ def _charge_ship(obj):
             platform = 2
         elif obj.platform == 'feiyu':
             platform = 4
-        res = requests.get('http://{0}:{1}'.format(server['http_host'], game_http_port(obj.serverid)), params={
+        res = requests.get('http://{0}:{1}/charge'.format(server['http_host'], game_http_port(obj.serverid)), params={
             'account': obj.uid,
             'productid': obj.product_id,
             'platform': platform,
             'order': obj.order_id,
             'pay_way': obj.pay_way,
         })
-        if res:
+        if res and res.content:
             obj.status = 1
             obj.save()
             return True
@@ -50,10 +52,10 @@ def _charge_ship(obj):
 
 
 def _pay_logic(platform, param):
-    cachekey = ORDER + param['order_id']
-    if cache.get(cachekey):
+    order_key = ORDER + param['order_id']
+    if cache.get(order_key):
         return
-    cache.set(cachekey, 1, CACHE_TIME)
+    cache.set(order_key, 1, CACHE_TIME)
     try:
         try:
             obj = ChargeOrder.objects.get(order_id=param['order_id'], platform=platform)
@@ -63,15 +65,12 @@ def _pay_logic(platform, param):
             param['platform'] = platform
             param['time'] = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
             obj = ChargeOrder.objects.create(**param)
-        print(obj.status)
         if obj.status == 0:
-            print('here')
             if not _charge_ship(obj):
                 cache.delete(CHARGE + param['uid'])
-
     except Exception as e:
         logger.error('_pay_logic error: {0}'.format(str(e)))
-    cache.delete(cachekey)
+    cache.delete(order_key)
 
 
 def xindong_pay(request):
@@ -122,9 +121,45 @@ def xindong_pay(request):
     return HttpResponse(code)
 
 
-def feiyu_pay(request):
-    pass
+def charge_player(request):
+    playerid = request.GET.get('uid', None)
+    serverid = request.GET.get('sid', None)
+    server = get_game_config(serverid)
+    ret = {
+        'ret': 1,
+        'error': 'not found user',
+    }
+    if server:
+        res = requests.get('http://{0}:{1}/reqchargeplayer'.format(server['http_host'], game_http_port(serverid)), params={
+            'playerid': playerid,
+        })
+        if res and res.content:
+            data = json.loads(res.content)
+            user = get_cache_account(uid=data['account'])
+            if user:
+                ret = data
+                ret['ret'] = 0
+                ret['uid'] = playerid
+                if 'xindong' in user['platform']:
+                    ret['account'] = user['platform']['xindong']
+    return JsonResponse(ret)
 
 
-def charge_player_info(request):
-    pass
+def request_charge(sid, uid):
+    charge_key = CHARGE + uid
+    if cache.get(charge_key):
+        return
+    objs = ChargeOrder.objects.filter(serverid=sid, account=uid, status=0)
+    result = True
+    for obj in objs:
+        order_key = ORDER + obj.order_id
+        if not cache.get(order_key):
+            cache.set(order_key, 1, CACHE_TIME)
+            if not _charge_ship(obj):
+                result = False
+            cache.delete(order_key)
+        else:
+            result = False
+    if result:
+        cache.set(charge_key, 1, CACHE_TIME)
+

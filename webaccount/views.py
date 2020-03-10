@@ -10,6 +10,7 @@ from .models import WebAccount
 from django.core.exceptions import ObjectDoesNotExist
 import requests
 from serverconf.interface import get_login_config, login_http_port, get_game_config
+from charge.views import request_charge
 
 logger = logging.getLogger('wasteland')
 LOGIN_ID = 1
@@ -34,6 +35,7 @@ def enter_game(request):
     if data:
         set_last_sid(uid, sid)
         platform = data['platform']
+        request_charge(sid, uid)
     return JsonResponse(platform)
 
 

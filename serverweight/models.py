@@ -11,7 +11,7 @@ class ServerWeight(models.Model):
         return "{{{0} : {1}}}".format(self.server, self.weight)
 
     class Meta:
-        verbose_name_plural = "服务器权重"
+        verbose_name_plural = "————"
 
 
 class CountryConfig(models.Model):
@@ -31,7 +31,7 @@ class LoginWeight(models.Model):
     country = models.ManyToManyField(CountryConfig, verbose_name='国家')
 
     class Meta:
-        verbose_name_plural = "————"
+        verbose_name_plural = "服务器权重"
 
     # 国家列表
     def country_list(self):

@@ -18,7 +18,7 @@ DATABASES = {
         'HOST': "127.0.0.1",               # 数据库ip
         'PORT': 3306,                          # 数据库端口
         'USER': "root",                        # 用户名
-        'PASSWORD': "123456",        # 密码
+        'PASSWORD': "icesola1",        # 密码
         'NAME': "pyweb",                       # 数据库名
     },
 }

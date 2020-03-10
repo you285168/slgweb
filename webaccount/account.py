@@ -11,6 +11,26 @@ LOCK_USER = 'lockuser'      #
 LOCK_TIME = None
 
 
+def get_account_device(accounts):
+    devices = []
+    if len(accounts) == 1:
+        # 针对单人的进行cache缓存
+        uid = accounts[0]
+        data = get_cache_account(uid=uid)
+        if data['lastdevice'] and data['lastdevice'] != '':
+            devices.append(data['lastdevice'])
+        else:
+            devices.append(data['device'])
+    else:
+        objs = WebAccount.objects.filter(uid__in=accounts)
+        for obj in objs:
+            if obj.lastdevice and obj.lastdevice != '':
+                devices.append(obj.lastdevice)
+            else:
+                devices.append(obj.device)
+    return devices
+
+
 def clear_account_cache(obj):
     del_lock_account(obj.uid)
     param = ['uid', 'device']
@@ -28,7 +48,6 @@ def get_account_info(device, platform, key, subplatform):
         })
     else:
         data = get_cache_account(device=device)
-
     if not data:
         params = {}
         if platform:

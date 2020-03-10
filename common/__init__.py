@@ -10,6 +10,9 @@ import uuid
 from django.core.cache import cache
 from django.db import models
 
+
+default_app_config = 'common.apps.CommonConfig'
+
 reader = geoip2.database.Reader('./extend/GeoLite2-Country.mmdb')
 logger = logging.getLogger('wasteland')
 

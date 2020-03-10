@@ -23,4 +23,5 @@ urlpatterns = [
     path('weight/', include('serverweight.urls')),
     path('account/', include('webaccount.urls')),
     path('charge/', include('charge.urls')),
+    path('push/', include('push.urls')),
 ]
