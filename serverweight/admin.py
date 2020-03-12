@@ -21,3 +21,27 @@ class LoginWeightAdmin(admin.ModelAdmin):
         """  删除时触发 """
         clear_page_cache('serverweight')
         super(LoginWeightAdmin, self).delete_model(request, obj)
+
+
+@admin.register(ServerWeight)
+class ServerWeightAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        clear_page_cache('serverweight')
+        super(ServerWeightAdmin, self).save_model(request, obj, form, change)
+
+    def delete_model(self, request, obj):
+        """  删除时触发 """
+        clear_page_cache('serverweight')
+        super(ServerWeightAdmin, self).delete_model(request, obj)
+
+
+@admin.register(CountryConfig)
+class CountryConfigAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        clear_page_cache('serverweight')
+        super(CountryConfigAdmin, self).save_model(request, obj, form, change)
+
+    def delete_model(self, request, obj):
+        """  删除时触发 """
+        clear_page_cache('serverweight')
+        super(CountryConfigAdmin, self).delete_model(request, obj)

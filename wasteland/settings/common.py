@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'serverconf',
-    'serverweight',
     'common',
     'charge',
     'webaccount',

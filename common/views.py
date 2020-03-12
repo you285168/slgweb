@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from . import clear_page_cache
 from .clientver import client_version, save_client_version
 from webaccount.platform import XINDONG_ID
+from .translate import baidu_translate
+from django.http.response import JsonResponse
+from .loginweight import clear_country_weight
 
 # Create your views here.
 
@@ -40,4 +43,12 @@ def set_client_version(request):
 
 
 def translate(request):
-    pass
+    text = request.GET.get('text', None)
+    language = request.GET.get('language', None)
+    data = baidu_translate(text, language)
+    return JsonResponse(data)
+
+
+def save_country_weight(request):
+    clear_country_weight()
+    return HttpResponse(0)

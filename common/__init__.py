@@ -7,8 +7,8 @@ from django.db.models.fields.related import ManyToManyField, ForeignKey
 import geoip2.database
 import logging
 import uuid
-from django.core.cache import cache
-from django.db import models
+import random
+from .loginweight import get_country_weight
 
 
 default_app_config = 'common.apps.CommonConfig'
@@ -103,3 +103,17 @@ def get_admin_url(request):
 def get_url_params():
     return _get_request_params(global_request)
 
+
+def random_weight(weight_data):
+    """权重随机"""
+    total = sum(weight_data.values())
+    ra = random.uniform(0, total)
+    curr_sum = 0
+    ret = None
+    keys = weight_data.keys()
+    for k in keys:
+        curr_sum += weight_data[k]
+        if ra <= curr_sum:
+            ret = k
+            break
+    return ret

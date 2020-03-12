@@ -19,7 +19,6 @@ import webaccount.views
 import serverconf.views
 import push.views
 import common.views
-import serverweight.views
 
 '''对原有做兼容修改'''
 
@@ -27,7 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('common/', include('common.urls')),
     path('server/', include('serverconf.urls')),
-    path('weight/', include('serverweight.urls')),
+    # path('weight/', include('serverweight.urls')),
     path('charge/', include('charge.urls')),
     path('push/', include('push.urls')),
     path('account/', include('webaccount.urls')),
@@ -45,13 +44,13 @@ urlpatterns = [
     path('saveclientver', common.views.set_client_version),
     path('gmserverlist.php', serverconf.views.get_game_list),
     path('gmupdateserver.php', serverconf.views.update_game_server),
-    path('countryweight', serverweight.views.save_country_weight),
+    path('countryweight', common.views.save_country_weight),
+
+    path('islockaccount.php', webaccount.views.is_account_lock),
+    path('lockaccount.php', webaccount.views.lock_account),
+    path('accountoflock.php', webaccount.views.get_lock_account),
+    path('islockip.php', webaccount.views.is_lockip),
+    path('ipoflock.php', webaccount.views.lockip_list),
+    path('lockip.php', webaccount.views.lock_ip),
+
 ]
-'''
-path('islockaccount.php', webaccount.views.is_lock_account),
-path('islockip.php', webaccount.views.is_lock_ip),
-path('ipoflock.php', webaccount.views.get_lock_ip),
-path('lockip.php', webaccount.views.lock_ip),
-path('lockaccount.php', webaccount.views.lock_account),
-path('accountoflock.php', webaccount.views.get_lock_account),
-'''

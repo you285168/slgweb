@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from .platform import platform_verify, FEIYU_KEY
 import logging
 from .account import *
-from common import get_client_ip, md5_sign, get_country_code
+from common import get_client_ip, md5_sign, get_country_code, get_country_weight, random_weight
 import time
 from .models import WebAccount
 from django.core.exceptions import ObjectDoesNotExist
@@ -147,7 +147,9 @@ def user_login(request):
 def _get_account_server(account, sid, country):
     login = get_login_config(LOGIN_ID)
     if sid == 0:
-        sid = 1
+        pool = get_country_weight(country)
+        if len(pool) > 0:
+            sid = random_weight(pool)
     game = get_game_config(sid)
     return {
         'serverid': game['id'],
@@ -205,3 +207,43 @@ def head_status(request):
             code = int(res.content)
     return HttpResponse(code)
 
+
+def is_account_lock(request):
+    uid = request.GET.get('account', None)
+    data = get_cache_account(uid=uid)
+    code = 0
+    if 'lock' in data and data['lock']:
+        code = 1
+    return HttpResponse(code)
+
+
+def lock_account(request):
+    uid = request.GET.get('account', None)
+    flag = request.GET.get('flag', None)
+    obj = WebAccount.objects.get(uid=uid)
+    if flag == 0:
+        obj.lock = False
+    else:
+        obj.lock = True
+    obj.save()
+    return HttpResponse(0)
+
+
+def get_lock_account(request):
+    ret = []
+    objs = WebAccount.objects.filter(lock=True)
+    for obj in objs:
+        ret.append(obj.uid)
+    return JsonResponse(ret, safe=False)
+
+
+def is_lockip(request):
+    pass
+
+
+def lockip_list(request):
+    pass
+
+
+def lock_ip(request):
+    pass

@@ -1,6 +1,7 @@
 from .models import LoginConfig, GameConfig
 from common import to_dict
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 
 CACHE_TIME = None
 
@@ -32,9 +33,12 @@ def get_game_config(sid):
     key = _get_game_key(sid)
     data = cache.get(key)
     if not data:
-        obj = GameConfig.objects.get(pk=sid)
-        data = to_dict(obj, deep=False)
-        cache.set(key, data, CACHE_TIME)
+        try:
+            obj = GameConfig.objects.get(pk=sid)
+            data = to_dict(obj, deep=False)
+            cache.set(key, data, CACHE_TIME)
+        except ObjectDoesNotExist:
+            pass
     return data
 
 
