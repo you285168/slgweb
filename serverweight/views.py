@@ -19,3 +19,6 @@ def login_weight(request):
             data[i.name] = weight
     return JsonResponse(data)
 
+
+def save_country_weight(request):
+    pass

@@ -8,40 +8,13 @@ from common import get_admin_url, get_url_params
 # Register your models here.
 
 
-class LockAccountFilter(admin.SimpleListFilter):
-    # 提供一个可读的标题
-    title = (u'是否冻结')
-
-    # 用于URL查询的参数.
-    parameter_name = 'lock'
-
-    def lookups(self, request, model_admin):
-        """
-        返回一个二维元组。每个元组的第一个元素是用于URL查询的真实值，
-        这个值会被self.value()方法获取，并作为queryset方法的选择条件。
-        第二个元素则是可读的显示在admin页面右边侧栏的过滤选项。
-        """
-        return (
-            ('1', ('已冻结')),
-        )
-
-    def queryset(self, request, queryset):
-        """
-        根据self.value()方法获取的条件值的不同执行具体的查询操作。
-        并返回相应的结果。
-        """
-        if self.value() == '1':
-            accounts = get_lock_account() or set()
-            return queryset.filter(uid__in=accounts)
-
-
 @admin.register(WebAccount)
 class WebAccountAdmin(admin.ModelAdmin):
     list_display = ('uid', 'device', 'lastdevice', 'xindong', 'create_new_uuid', 'lock_and_unlock')
     list_display_links = ('uid', )
     list_editable = ['device', 'xindong']
     search_fields = ('uid', 'device', 'xindong')  # 搜索字段
-    list_filter = (LockAccountFilter,)
+    list_filter = ('lock',)
 
     list_per_page = 20
 
@@ -67,7 +40,7 @@ class WebAccountAdmin(admin.ModelAdmin):
 
     @mark_safe
     def lock_and_unlock(self, obj):
-        if is_lock_account(obj.uid):
+        if obj.lock:
             title = '冻结'
             color_code = 'red'
             dest = '{}unlockuid/{}'.format(obj.pk, get_url_params())
@@ -79,6 +52,7 @@ class WebAccountAdmin(admin.ModelAdmin):
 
     lock_and_unlock.short_description = 'lock'
     lock_and_unlock.allow_tags = True
+
 
     def get_urls(self):
         from django.conf.urls import url
@@ -99,11 +73,13 @@ class WebAccountAdmin(admin.ModelAdmin):
 
     def lock_uid(self, request, *args, **kwargs):
         obj = get_object_or_404(WebAccount, pk=kwargs['pk'])
-        add_lock_account(obj.uid)
+        obj.lock = True
+        obj.save()
         return redirect(get_admin_url(request))
 
     def unlock_uid(self, request, *args, **kwargs):
         obj = get_object_or_404(WebAccount, pk=kwargs['pk'])
-        del_lock_account(obj.uid)
+        obj.lock = False
+        obj.save()
         return redirect(get_admin_url(request))
 

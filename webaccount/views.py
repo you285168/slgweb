@@ -9,13 +9,20 @@ import time
 from .models import WebAccount
 from django.core.exceptions import ObjectDoesNotExist
 import requests
-from serverconf.interface import get_login_config, login_http_port, get_game_config
+from serverconf.interface import get_login_config, login_http_port, get_game_config, game_http_port
 from charge.views import request_charge
+from wasteland import LOGIN_ID
+import json
+import time
 
-logger = logging.getLogger('wasteland')
-LOGIN_ID = 1
 
 # Create your views here.
+logger = logging.getLogger('wasteland')
+TAP_DB = [
+    # "ds1vsnkc1pp9cdyc",     #全球包
+    # "jkhup69o5huy7cnx",     #台湾包
+    # "qoggr1neujjacw0t",     #taptap包
+]
 
 
 def account_test(request):
@@ -30,10 +37,19 @@ def account_test(request):
 def enter_game(request):
     uid = request.GET.get('account', None)
     sid = request.GET.get('serverid', None)
+    playerid = request.GET.get('playerid', None)
+    name = request.GET.get('name', None)
     data = get_cache_account(uid=uid)
     platform = {}
     if data:
-        set_last_sid(uid, sid)
+        server = get_game_config(sid)
+        if server and ('test' not in server or not server['test']):
+            if data['lastserver'] != sid or data['playerid'] != playerid or data['name'] != name:
+                obj = WebAccount.objects.get(uid=uid)
+                obj.lastserver = sid
+                obj.playerid = playerid
+                obj.name = name
+                obj.save()
         platform = data['platform']
         request_charge(sid, uid)
     return JsonResponse(platform)
@@ -107,10 +123,10 @@ def user_login(request):
         result = get_account_info(device, platform, platformkey, subplatform)
         break
     if result:
-        if is_lock_account(result['uid']):
+        if result['lock']:
             code = 6
         else:
-            ret = _get_account_server(result['uid'], clientos, get_country_code(ip))
+            ret = _get_account_server(result['uid'], result['lastserver'], get_country_code(ip))
             curtime = int(time.time())
             ret.update({
                 'bind': result['platform'],
@@ -128,21 +144,64 @@ def user_login(request):
     return JsonResponse(ret)
 
 
-def _get_account_server(account, clientos, country):
+def _get_account_server(account, sid, country):
     login = get_login_config(LOGIN_ID)
-    '''
-    res = requests.get('http//{0}:{1}'.format(login['http_host'], login_http_port(login['id'])), params={
-        'account': account,
-        'clientos': clientos,
-        'country': country,
-    })
-    sid = int(res.content)
-    '''
-    sid = get_last_sid(account)
+    if sid == 0:
+        sid = 1
     game = get_game_config(sid)
     return {
         'serverid': game['id'],
         'ip': login['network_ip'],
         'port': login['network_port'],
         'status': game['status'],
+        'appver': game['appver'],
+        'resver': game['resver'],
     }
+
+
+def xindong_online(request):
+    now_time = int(time.time())
+    text = request.GET.get('online')
+    temp = json.loads(text)
+    onlines = []
+    for val in temp:
+        val['timestamp'] = now_time
+        onlines.append(val)
+    url = 'https://se-sg.tapdb.net/tapdb/online'
+    headers = {
+        'Content-Type': 'application/json',
+    }
+    content = ''
+    for key in TAP_DB:
+        data = {
+            'appid': key,
+            'onlines': onlines,
+        }
+        res = requests.post(url, json=data, headers=headers)
+        if res.status_code != requests.codes.ok:
+            logger.error("xindong online post error {0} {1}".format(str(res.status_code), res.content))
+        content = res.content
+    return HttpResponse(content)
+
+
+def head_status(request):
+    playerid = request.GET.get('playerid', None)
+    sid = int(request.GET.get('serverid', 0))
+    status = request.GET.get('status', None)
+    head = request.GET.get('head', None)
+    code = 0
+    server = get_game_config(sid)
+    if not server:
+        code = 2
+    else:
+        res = requests.get('http://{0}:{1}/headstatus'.format(server['http_host'], game_http_port(sid)), params={
+            'playerid': playerid,
+            'status': status,
+            'head': head,
+        })
+        if res.status_code != requests.codes.ok:
+            logger.error("head_status error {0} {1}".format(str(res.status_code), res.content))
+        else:
+            code = int(res.content)
+    return HttpResponse(code)
+

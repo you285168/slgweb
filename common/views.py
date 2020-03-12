@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.core.cache import cache
 from django.http import HttpResponse
 from . import clear_page_cache
+from .clientver import client_version, save_client_version
+from webaccount.platform import XINDONG_ID
 
 # Create your views here.
 
@@ -26,3 +28,16 @@ def clean_cache(request):
     clear_page_cache()
     return HttpResponse("success")
 
+
+def get_client_version(request):
+    return HttpResponse(client_version(XINDONG_ID))
+
+
+def set_client_version(request):
+    ver = request.GET.get('clientstr', None)
+    save_client_version(XINDONG_ID, ver)
+    return HttpResponse(0)
+
+
+def translate(request):
+    pass

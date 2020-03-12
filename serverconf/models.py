@@ -46,20 +46,26 @@ class LoginConfig(models.Model):
 
 
 class GameConfig(models.Model):
+    servername = models.CharField(max_length=64, default='')
+    world = models.ForeignKey(WorldConfig, on_delete=models.PROTECT)
+    login = models.ForeignKey(LoginConfig, on_delete=models.PROTECT)
     network_ip = models.CharField(max_length=64)
     network_port = models.IntegerField()
     http_host = models.CharField(max_length=64)
     dbc_player = models.ForeignKey(DBConfig, null=True, on_delete=models.PROTECT, blank=True)
     dbc_log = models.ForeignKey(DBConfig, on_delete=models.PROTECT, related_name="game_log")
     dbc_global = models.ForeignKey(DBConfig, on_delete=models.PROTECT, related_name="game_global")
-    standalone = models.IntegerField(default=0)
     status = models.IntegerField(default=1)
-    test = models.IntegerField(default=0)
+    appver = models.CharField(max_length=64, default='1.0.0')
+    resver = models.CharField(max_length=64, default='1.0.0')
     arenaid = models.IntegerField(default=0)
+    heroarena = models.IntegerField(default=0)
+    warbanner = models.IntegerField(default=0)
+    safetime = models.IntegerField(default=0)
+    test = models.BooleanField(default=False, verbose_name='测试服')
+    standalone = models.BooleanField(default=False, verbose_name='独立时间')
     trailnotice = models.DateTimeField(blank=True, null=True)
-    servername = models.CharField(max_length=64, default='')
-    world = models.ForeignKey(WorldConfig, on_delete=models.PROTECT)
-    login = models.ForeignKey(LoginConfig, on_delete=models.PROTECT)
+
 
     class Meta:
         verbose_name_plural = "游戏服配置"

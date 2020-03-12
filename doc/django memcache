@@ -16,6 +16,10 @@ memcached -p11211 -m1024m -d -unginx
 -P是设置保存Memcache的pid文件
 -u是运行Memcache的用户
 
+设置开机自启动
+在 /etc/rc.d/rc.local 文件中追加启动命令
+/usr/bin/memcached -p11211 -m1024m -d -unginx
+
 
 telnet 127.0.0.1 11211      #连接
 

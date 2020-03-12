@@ -24,7 +24,7 @@ def get_country_code(ip):
         response = reader.country(ip)
         code = response.country.iso_code
     except Exception as e:
-        logger.error('geoip2 error: {0}'.format(str(e)))
+        logger.warning('geoip2 error: {0}'.format(str(e)))
     return code
 
 

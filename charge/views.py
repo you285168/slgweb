@@ -149,7 +149,7 @@ def request_charge(sid, uid):
     charge_key = CHARGE + uid
     if cache.get(charge_key):
         return
-    objs = ChargeOrder.objects.filter(serverid=sid, account=uid, status=0)
+    objs = ChargeOrder.objects.filter(serverid=sid, uid=uid, status=0)
     result = True
     for obj in objs:
         order_key = ORDER + obj.order_id

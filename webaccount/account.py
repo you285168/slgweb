@@ -32,7 +32,6 @@ def get_account_device(accounts):
 
 
 def clear_account_cache(obj):
-    del_lock_account(obj.uid)
     param = ['uid', 'device']
     param[2:] = iter(PLATFORM)
     keys = {k: v for k, v in model_to_dict(obj, fields=param).items() if len(v) > 0}
@@ -68,7 +67,7 @@ def get_account_info(device, platform, key, subplatform):
 
 
 def _get_account_detail(obj):
-    ret = model_to_dict(obj, fields=['uid', 'device', 'lastdevice'])
+    ret = model_to_dict(obj, exclude=PLATFORM)
     ret['platform'] = {k: v for k, v in model_to_dict(obj, fields=PLATFORM).items() if len(v) > 0}
     return ret
 
@@ -86,23 +85,6 @@ def get_cache_account(**kwargs):
     return data
 
 
-def _get_sid_key(uid):
-    return 'lastsid' + uid
-
-
-def get_last_sid(uid):
-    cachekey = _get_sid_key(uid)
-    sid = cache.get(cachekey)
-    if not sid:
-        sid = 1
-    return sid
-
-
-def set_last_sid(uid, sid):
-    cachekey = _get_sid_key(uid)
-    cache.set(cachekey, sid, None)
-
-
 def is_lock_ip(ip):
     ips = get_lock_ip()
     if ips:
@@ -118,25 +100,3 @@ def add_lock_ip(ip):
     ips.add(ip)
     cache.set(LOCK_IP, ips, LOCK_TIME)
 
-
-def is_lock_account(account):
-    accounts = get_lock_account()
-    if accounts:
-        return account in accounts
-
-
-def get_lock_account():
-    return cache.get(LOCK_USER)
-
-
-def add_lock_account(account):
-    accounts = get_lock_account() or set()
-    accounts.add(account)
-    cache.set(LOCK_USER, accounts, LOCK_TIME)
-
-
-def del_lock_account(account):
-    accounts = get_lock_account()
-    if accounts and account in accounts:
-        accounts.remove(account)
-        cache.set(LOCK_USER, accounts, LOCK_TIME)
