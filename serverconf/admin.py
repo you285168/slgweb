@@ -102,8 +102,11 @@ class GameConfigAdmin(admin.ModelAdmin):
         old_data['dbc_global'] = DBConfig.objects.get(pk=old_data['dbc_global'])
         old_data['world'] = WorldConfig.objects.get(pk=old_data['world'])
         old_data['login'] = LoginConfig.objects.get(pk=old_data['login'])
-
-        r_pk = GameConfig.objects.create(**old_data)
+        new_obj = GameConfig.objects.create(**old_data)
+        new_obj.arenaid = new_obj.pk
+        new_obj.heroarena = new_obj.pk
+        new_obj.warbanner = new_obj.pk
+        new_obj.save()
         return redirect(get_admin_url(request))
 
 
