@@ -30,9 +30,9 @@ def baidu_translate(text, language):
     args['sign'] = md5(sign.encode('utf8')).hexdigest()
     res = requests.post(BAIDU_URL, data=args)
     data = {}
-    ret = json.dumps(res.text)
+    ret = json.loads(res.content)
     if ret['error_code']:
-        logger.warning('baidu translate error {0}', res.text)
+        logger.warning('baidu translate error {0}', res.content)
     else:
         data['from'] = ret['from']
         data['to'] = ret['to']
