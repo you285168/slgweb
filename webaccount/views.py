@@ -160,7 +160,7 @@ def _get_account_server(account, sid, country):
             sid = random_weight(pool)
     game = get_game_config(sid)
     return {
-        'serverid': game['id'],
+        'serverid': game['serverid'],
         'ip': login['network_ip'],
         'port': login['network_port'],
         'status': game['status'],

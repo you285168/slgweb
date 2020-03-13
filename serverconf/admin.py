@@ -14,16 +14,16 @@ admin.site.site_title = 'wasteland后台'
 @admin.register(GameConfig)
 class GameConfigAdmin(admin.ModelAdmin):
     # 设置哪些字段可以点击进入编辑界面(默认可以点击每条记录第一个字段的值可以进入编辑界面)
-    list_display_links = ('id',)
+    list_display_links = ('serverid',)
 
     # listdisplay设置要显示在列表中的字段（id字段是Django模型的默认主键）
-    list_display = ('id', 'world', 'login', 'colored_status', 'network_ip', 'network_port', 'http_host', 'dbc_player', 'arenaid', 'copy_current_data')
+    list_display = ('serverid', 'world', 'login', 'colored_status', 'network_ip', 'network_port', 'http_host', 'dbc_player', 'arenaid', 'copy_current_data')
 
     # list_per_page设置每页显示多少条记录，默认是100条
     list_per_page = 50
 
     # ordering设置默认排序字段，负号表示降序排序
-    ordering = ('id',)
+    ordering = ('-serverid',)
 
     # list_editable 设置默认可编辑字段
     list_editable = ['dbc_player', 'network_ip', 'network_port', 'arenaid', 'world']
@@ -33,7 +33,7 @@ class GameConfigAdmin(admin.ModelAdmin):
 
     # 筛选器
     # list_filter = ('dbc_player', )  # ManyToManyField多对多字段用过滤器过滤器
-    search_fields = ('id',)          # 搜索字段
+    search_fields = ('serverid',)          # 搜索字段
     # date_hierarchy = 'go_time'      # 详细时间分层筛选　
 
     # 可以用fields或exclude控制显示或者排除的字段，二选一即可
@@ -95,32 +95,31 @@ class GameConfigAdmin(admin.ModelAdmin):
     def copy_one(self, request, *args, **kwargs):
         """函数实现复制本条数据，并跳转到新复制的数据的修改页面"""
         obj = get_object_or_404(GameConfig, pk=kwargs['pk'])
-        old_data = model_to_dict(obj, exclude=('id', 'dbc_player', 'dbc_log', 'dbc_global'))
-        old_data['world'] = WorldConfig.objects.get(pk=old_data['world'])
-        old_data['login'] = LoginConfig.objects.get(pk=old_data['login'])
-        new_obj = GameConfig.objects.create(**old_data)
-        new_obj.arenaid = new_obj.pk
-        new_obj.heroarena = new_obj.pk
-        new_obj.warbanner = new_obj.pk
-        new_obj.servername = 's' + str(new_obj.pk)
-        new_obj.network_port = game_network_port(new_obj.pk)
+        old_data = model_to_dict(obj, exclude=('id', 'dbc_player', 'dbc_log', 'dbc_global', 'world', 'login'))
+        old_data['world'] = obj.world
+        old_data['login'] = obj.login
+        new_id = obj.serverid + 1
+        old_data['serverid'] = new_id
+        old_data['arenaid'] = new_id
+        old_data['heroarena'] = new_id
+        old_data['warbanner'] = new_id
+        old_data['servername'] = 's' + str(new_id)
+        old_data['network_port'] = game_network_port(new_id)
         dbobj = obj.dbc_log
-        dbdata = model_to_dict(dbobj)
-        dbdata.pop('id')
-        dbdata['dbname'] = 'game_log_' + str(new_obj.pk)
-        new_obj.dbc_log = DBConfig.objects.create(**dbdata)
+        dbdata = model_to_dict(dbobj, exclude=('id',))
+        dbdata['dbname'] = 'game_log_' + str(new_id)
+        old_data['dbc_log'] = DBConfig.objects.create(**dbdata)
         dbobj = obj.dbc_global
-        dbdata = model_to_dict(dbobj)
-        dbdata.pop('id')
-        dbdata['dbname'] = 'game_global_' + str(new_obj.pk)
-        new_obj.dbc_global = DBConfig.objects.create(**dbdata)
-        new_obj.save()
+        dbdata = model_to_dict(dbobj, exclude=('id',))
+        dbdata['dbname'] = 'game_global_' + str(new_id)
+        old_data['dbc_global'] = DBConfig.objects.create(**dbdata)
+        new_obj = GameConfig.objects.create(**old_data)
         return redirect(get_admin_url(request))
 
 
 @admin.register(LoginConfig)
 class LoginConfigAdmin(admin.ModelAdmin):
-    list_display = ('id', 'network_ip', 'network_port', 'port', 'http_host')
+    list_display = ('loginid', 'network_ip', 'network_port', 'port', 'http_host')
     list_editable = ['network_ip', 'network_port', 'port', 'http_host']
 
     # ManyToMany多对多字段设置。可以用filter_horizontal或filter_vertical
@@ -145,7 +144,7 @@ class LoginConfigAdmin(admin.ModelAdmin):
 
 @admin.register(WorldConfig)
 class WorldConfigAdmin(admin.ModelAdmin):
-    list_display = ('id', 'gmt', 'http_host', 'dbc_world')
+    list_display = ('worldid', 'gmt', 'http_host', 'dbc_world')
     list_editable = ['gmt', 'http_host', 'dbc_world']
 
     def save_model(self, request, obj, form, change):

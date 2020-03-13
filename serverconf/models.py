@@ -20,6 +20,7 @@ class DBConfig(models.Model):
 
 # Create your models here.
 class WorldConfig(models.Model):
+    worldid = models.IntegerField(default=0)
     dbc_world = models.ForeignKey(DBConfig, on_delete=models.PROTECT, verbose_name='world数据库')
     gmt = models.IntegerField(default=0, verbose_name='时区')
     http_host = models.CharField(max_length=64, verbose_name='内网IP')
@@ -28,10 +29,11 @@ class WorldConfig(models.Model):
         verbose_name_plural = "世界服配置"
 
     def __str__(self):
-        return str(self.id)
+        return str(self.worldid)
 
 
 class LoginConfig(models.Model):
+    loginid = models.IntegerField(default=0)
     dbc_player = models.ManyToManyField(DBConfig, blank=True)
     network_ip = models.CharField(max_length=64)
     network_port = models.IntegerField()
@@ -42,10 +44,11 @@ class LoginConfig(models.Model):
         verbose_name_plural = "登陆服配置"
 
     def __str__(self):
-        return str(self.id)
+        return str(self.loginid)
 
 
 class GameConfig(models.Model):
+    serverid = models.IntegerField(default=0)
     servername = models.CharField(max_length=64, default='')
     world = models.ForeignKey(WorldConfig, on_delete=models.PROTECT)
     login = models.ForeignKey(LoginConfig, on_delete=models.PROTECT)

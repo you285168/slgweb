@@ -68,7 +68,7 @@ def get_account_info(device, platform, key, subplatform):
 
 def _get_account_detail(obj):
     ret = model_to_dict(obj, exclude=PLATFORM)
-    ret['platform'] = {k: v for k, v in model_to_dict(obj, fields=PLATFORM).items() if len(v) > 0}
+    ret['platform'] = {k: v for k, v in model_to_dict(obj, fields=PLATFORM).items() if v and len(v) > 0}
     return ret
 
 

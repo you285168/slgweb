@@ -17,11 +17,11 @@ def game_config(request):
     objs = GameConfig.objects.all()
     for obj in objs:
         if obj.pk == sid:
-            data = to_dict(obj)
+            data = to_dict(obj, exclude=('id',))
         gamelist.append(to_dict(obj, fields=(
             'network_ip',
             'network_port',
-            'id',
+            'serverid',
             'world',
             'login',
             'servername',
@@ -39,15 +39,15 @@ def game_config(request):
 
 def login_config(request):
     sid = request.GET.get('loginid', None)
-    obj = LoginConfig.objects.get(pk=sid)
-    data = to_dict(obj)
+    obj = LoginConfig.objects.get(loginid=sid)
+    data = to_dict(obj, exclude=('id',))
     return JsonResponse(data)
 
 
 def world_config(request):
     sid = request.GET.get('worldid', None)
-    obj = WorldConfig.objects.get(pk=sid)
-    data = to_dict(obj)
+    obj = WorldConfig.objects.get(worldid=sid)
+    data = to_dict(obj, exclude=('id',))
     return JsonResponse(data)
 
 
@@ -69,11 +69,11 @@ def get_game_list(request):
     if not sid:
         objs = GameConfig.objects.all()
         for obj in objs:
-            ret.append(to_dict(obj))
+            ret.append(to_dict(obj, exclude=('id',)))
     else:
         try:
-            obj = GameConfig.objects.get(pk=sid)
-            ret.append(to_dict(obj))
+            obj = GameConfig.objects.get(serverid=sid)
+            ret.append(to_dict(obj, exclude=('id',)))
         except ObjectDoesNotExist:
             pass
     print(ret)
@@ -85,7 +85,7 @@ def update_game_server(request):
     sid = request.GET.get('serverid')
     if sid:
         try:
-            obj = GameConfig.objects.get(pk=sid)
+            obj = GameConfig.objects.get(serverid=sid)
             for key, value in request.GET.items():
                 if key != 'serverid':
                     setattr(obj, key, value)

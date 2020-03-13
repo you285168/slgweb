@@ -14,7 +14,7 @@ def get_login_config(sid):
     key = _get_login_key(sid)
     data = cache.get(key)
     if not data:
-        obj = LoginConfig.objects.get(pk=sid)
+        obj = LoginConfig.objects.get(loginid=sid)
         data = to_dict(obj)
         cache.set(key, data, CACHE_TIME)
     return data
@@ -34,7 +34,7 @@ def get_game_config(sid):
     data = cache.get(key)
     if not data:
         try:
-            obj = GameConfig.objects.get(pk=sid)
+            obj = GameConfig.objects.get(serverid=sid)
             data = to_dict(obj, deep=False)
             cache.set(key, data, CACHE_TIME)
         except ObjectDoesNotExist:
