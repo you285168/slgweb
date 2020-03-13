@@ -13,7 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 def game_config(request):
     sid = int(request.GET.get('serverid'))
-    gamelist = []
+    gamelist = {}
     objs = GameConfig.objects.all()
     for obj in objs:
         if obj.pk == sid:
