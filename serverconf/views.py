@@ -18,7 +18,7 @@ def game_config(request):
     for obj in objs:
         if obj.pk == sid:
             data = to_dict(obj, exclude=('id',))
-        gamelist.append(to_dict(obj, fields=(
+        gamelist[obj.serverid] = to_dict(obj, fields=(
             'network_ip',
             'network_port',
             'serverid',
@@ -32,7 +32,7 @@ def game_config(request):
             'trailnotice',
             'heroarena',
             'warbanner',
-        ), deep=False))
+        ), deep=False)
     data['gamelist'] = gamelist
     return JsonResponse(data)
 
