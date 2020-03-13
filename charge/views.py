@@ -36,8 +36,8 @@ def _charge_ship(obj):
         elif obj.platform == 'feiyu':
             platform = 4
         res = requests.get('http://{0}:{1}/charge'.format(server['http_host'], game_http_port(obj.serverid)), params={
-            'account': obj.uid,
-            'productid': obj.product_id,
+            'account': obj.account,
+            'product_id': obj.product_id,
             'platform': platform,
             'order': obj.order_id,
             'pay_way': obj.pay_way,
@@ -67,14 +67,14 @@ def _pay_logic(platform, param):
             obj = ChargeOrder.objects.create(**param)
         if obj.status == 0:
             if not _charge_ship(obj):
-                cache.delete(CHARGE + param['uid'])
+                cache.delete(CHARGE + param['account'])
     except Exception as e:
         logger.error('_pay_logic error: {0}'.format(str(e)))
     cache.delete(order_key)
 
 
 def xindong_pay(request):
-    product_id = request.GET.get('productid', None)
+    product_id = request.GET.get('product_id', None)
     sign = request.GET.get('sign', None)
     sid = request.GET.get('server_id', None)
     mark = request.GET.get('mark', None)
@@ -97,7 +97,7 @@ def xindong_pay(request):
             else:
                 param = {
                     'serverid': sid,
-                    'uid': data['uid'],
+                    'account': data['uid'],
                     'product_id': product_id,
                     'pay_way': pay_way,
                     'order_id': order,
@@ -149,7 +149,7 @@ def request_charge(sid, uid):
     charge_key = CHARGE + uid
     if cache.get(charge_key):
         return
-    objs = ChargeOrder.objects.filter(serverid=sid, uid=uid, status=0)
+    objs = ChargeOrder.objects.filter(serverid=sid, account=uid, status=0)
     result = True
     for obj in objs:
         order_key = ORDER + obj.order_id

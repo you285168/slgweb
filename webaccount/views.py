@@ -146,6 +146,14 @@ def user_login(request):
 
 def _get_account_server(account, sid, country):
     login = get_login_config(LOGIN_ID)
+    '''
+    if sid == 0:
+        res = requests.get('http://{0}:{1}/last_server'.format(login['http_host'], login_http_port(LOGIN_ID)), params={
+            'account': account,
+        })
+        if res.status_code == requests.codes.ok:
+            sid = int(res.text)
+    '''
     if sid == 0:
         pool = get_country_weight(country)
         if len(pool) > 0:

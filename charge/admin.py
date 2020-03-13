@@ -5,8 +5,8 @@ from .models import ChargeOrder
 
 
 @admin.register(ChargeOrder)
-class WebAccountAdmin(admin.ModelAdmin):
-    list_display = ('uid', 'serverid', 'playerid', 'device', 'order_id', 'product_id', 'status', 'tester', 'platform', 'pay_way', 'time')
+class ChargeOrderAdmin(admin.ModelAdmin):
+    list_display = ('account', 'serverid', 'playerid', 'device', 'order_id', 'product_id', 'status', 'tester', 'platform', 'pay_way', 'time')
 
     '''
     def get_readonly_fields(self, request, obj=None):

@@ -4,7 +4,7 @@ from django.db import models
 
 
 class WebAccount(models.Model):
-    uid = models.CharField(max_length=64, db_index=True)
+    uid = models.CharField(max_length=64, db_index=True, primary_key=True)
     device = models.CharField(max_length=64, db_index=True, default='')
     googleplay = models.CharField(max_length=64, db_index=True, default='')
     facebook = models.CharField(max_length=64, db_index=True, default='')
@@ -12,6 +12,7 @@ class WebAccount(models.Model):
     feiyu = models.CharField(max_length=64, db_index=True, default='')
     xindong = models.CharField(max_length=64, db_index=True, default='')
     subplatform = models.CharField(max_length=64, default='')
+    loginid = models.IntegerField(default=1)
     playerid = models.IntegerField(default=0)
     lastserver = models.IntegerField(default=0)
     name = models.CharField(max_length=255, default='')
@@ -19,3 +20,5 @@ class WebAccount(models.Model):
 
     class Meta:
         verbose_name_plural = "玩家"
+        db_table = "webaccount"
+        managed = True
