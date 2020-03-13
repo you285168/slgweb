@@ -10,6 +10,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterModelOptions(
+            name='webaccount',
+            options={'managed': True, 'verbose_name_plural': '玩家'},
+        ),
         migrations.AddField(
             model_name='webaccount',
             name='lastserver',
