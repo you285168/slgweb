@@ -57,3 +57,7 @@ def world_http_port(sid):
 
 def game_http_port(sid):
     return 10000 + (sid % 1000) * 10 + 3
+
+
+def game_network_port(sid):
+    return 10000 + (sid % 1000) * 10 + 2

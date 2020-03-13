@@ -3,7 +3,7 @@ from .models import DBConfig, WorldConfig, LoginConfig, GameConfig
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.safestring import mark_safe
 from django.forms.models import model_to_dict
-from .interface import _clear_login_cache, _clear_game_cache
+from .interface import _clear_login_cache, _clear_game_cache, game_network_port
 from common import get_admin_url, get_url_params
 
 # Register your models here.
@@ -95,17 +95,25 @@ class GameConfigAdmin(admin.ModelAdmin):
     def copy_one(self, request, *args, **kwargs):
         """函数实现复制本条数据，并跳转到新复制的数据的修改页面"""
         obj = get_object_or_404(GameConfig, pk=kwargs['pk'])
-        old_data = model_to_dict(obj)
-        old_data.pop('id')
-        old_data.pop('dbc_player')
-        old_data['dbc_log'] = DBConfig.objects.get(pk=old_data['dbc_log'])
-        old_data['dbc_global'] = DBConfig.objects.get(pk=old_data['dbc_global'])
+        old_data = model_to_dict(obj, exclude=('id', 'dbc_player', 'dbc_log', 'dbc_global'))
         old_data['world'] = WorldConfig.objects.get(pk=old_data['world'])
         old_data['login'] = LoginConfig.objects.get(pk=old_data['login'])
         new_obj = GameConfig.objects.create(**old_data)
         new_obj.arenaid = new_obj.pk
         new_obj.heroarena = new_obj.pk
         new_obj.warbanner = new_obj.pk
+        new_obj.servername = 's' + str(new_obj.pk)
+        new_obj.network_port = game_network_port(new_obj.pk)
+        dbobj = obj.dbc_log
+        dbdata = model_to_dict(dbobj)
+        dbdata.pop('id')
+        dbdata['dbname'] = 'game_log_' + str(new_obj.pk)
+        new_obj.dbc_log = DBConfig.objects.create(**dbdata)
+        dbobj = obj.dbc_global
+        dbdata = model_to_dict(dbobj)
+        dbdata.pop('id')
+        dbdata['dbname'] = 'game_global_' + str(new_obj.pk)
+        new_obj.dbc_global = DBConfig.objects.create(**dbdata)
         new_obj.save()
         return redirect(get_admin_url(request))
 

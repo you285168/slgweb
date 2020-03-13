@@ -64,9 +64,11 @@ def to_dict(obj, *, fields=None, exclude=None, deep=True):
             continue
 
         if isinstance(f, ForeignKey) and deep:
-            value = to_dict(f.remote_field.model.objects.get(pk=value))
+            temp = getattr(obj, f.name)
+            value = to_dict(temp)
 
         if isinstance(f, ManyToManyField):
+            '''未验证'''
             if deep:
                 temp = f.remote_field.model.objects.filter(pk__in=[i.id for i in value] if obj.pk else [])
                 value = [to_dict(i) for i in temp]
