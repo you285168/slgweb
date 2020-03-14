@@ -4,6 +4,7 @@ import requests
 import logging
 import json
 from common import md5_sign
+from django.conf import settings
 
 logger = logging.getLogger('wasteland')
 
@@ -18,6 +19,8 @@ XINDONG_ID = '161414'
 
 def platform_verify(platform, signture, subplatform, email):
     key = None
+    idcard = ""
+    minor = False
     if platform == 'gamecenter':
         key = _gamecenter_verify(signture, email)
     elif platform == 'googleplay':
@@ -27,8 +30,12 @@ def platform_verify(platform, signture, subplatform, email):
     elif platform == 'feiyu':
         key = _feiyu_verify(signture, subplatform, email)
     elif platform == 'xindong':
-        key = _googleplay_verify(platform, signture, email)
-    return key
+        data = _xindong_verify(signture)
+        if data:
+            key = data.get('uid', None)
+            idcard = data.get('idcard_md5', '')
+            minor = data.get('minor', False)
+    return key, idcard, minor
 
 
 def _get_platform_cache(platform, key):
@@ -75,7 +82,7 @@ def _xindong_verify(token):
     })
     data = json.loads(res.content)
     if 'uid' in data:
-        return data['uid']
+        return data
     else:
         logger.error('xindong verify fail ret:{0}'.format(res.content))
 
@@ -93,10 +100,7 @@ def _facebook_verify(platform, token, email):
         res = requests.get('https://graph.facebook.com/v2.8/debug_token', params={
             'input_token': token,
             'access_token': str(FBID) + '|' + FBSECRET,
-        }, proxies={
-            'http': 'http://127.0.0.1:1080',
-            'https': 'https://127.0.0.1:1080'
-        })
+        }, proxies=settings.REQUEST_PROXIES)
         data = json.loads(res.content)
         if 'user_id' in data and data['user_id'] == email:
             found = True
@@ -118,10 +122,7 @@ def _googleplay_verify(platform, token, email):
         # 客户端请求一个TOKEN和EMAIL发给服务器，服务器拿这个TOKEN去https: // www.googleapis.com / oauth2 / v3 / tokeninfo地址请求EMAIL信息，然后比对TOKEN和EMAIL，并且根据返回的NAME来指定账号名
         res = requests.get('https://www.googleapis.com/oauth2/v3/tokeninfo', params={
             'access_token': token,
-        }, proxies={
-            'http': 'http://127.0.0.1:1080',
-            'https': 'https://127.0.0.1:1080'
-        })
+        }, proxies=settings.REQUEST_PROXIES)
         data = json.loads(res.content)
         if 'email' in data and data['email'] == email:
             found = True

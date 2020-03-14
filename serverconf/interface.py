@@ -1,8 +1,12 @@
-from .models import LoginConfig, GameConfig
+from .models import LoginConfig, GameConfig, WorldConfig
 from common import to_dict
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+import requests
+import logging
 
+
+logger = logging.getLogger('wasteland')
 CACHE_TIME = None
 
 
@@ -61,3 +65,21 @@ def game_http_port(sid):
 
 def game_network_port(sid):
     return 10000 + (sid % 1000) * 10 + 2
+
+
+def reload_config(host, port):
+    res = requests.get('http://{0}:{1}/reloadconfig'.format(host, port))
+    if res.status_code != requests.codes.ok:
+        logger.warning('{0} error: {1}'.format(requests.get_full_path(), res.content))
+
+
+def reload_login_config():
+    objs = LoginConfig.objects.all()
+    for obj in objs:
+        reload_config(obj.http_host, login_http_port(obj.loginid))
+
+
+def reload_world_config():
+    objs = WorldConfig.objects.all()
+    for obj in objs:
+        reload_config(obj.http_host, world_http_port(obj.worldid))

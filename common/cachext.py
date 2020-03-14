@@ -33,7 +33,6 @@ def add_page_cache(request, group='default', key_prefix=None):
         'cache': cachekey,
     }
     _save_page_cache(page_cache)
-    print(page_cache)
 
 
 def _delete_page_cache(group):
@@ -45,13 +44,11 @@ def _delete_page_cache(group):
 def clear_page_cache(group=None):
     """清除指定视图缓存信息"""
     page_cache = _page_cache_dict()
-    print(page_cache, group)
     if not group:
         for i in page_cache.values():
             _delete_page_cache(i)
     elif group in page_cache:
         temp = page_cache[group]
-        print(temp)
         if temp:
             _delete_page_cache(temp)
 

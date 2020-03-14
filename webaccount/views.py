@@ -105,6 +105,8 @@ def user_login(request):
     code = 0
     result = None
     ret = None
+    idcard = ''
+    minor = False
     if platform == 'nil':
         platform = None
     while True:
@@ -116,7 +118,7 @@ def user_login(request):
             code = 1
             break
         if platform:
-            platformkey = platform_verify(platform, signture, subplatform, email)
+            platformkey, idcard, minor = platform_verify(platform, signture, subplatform, email)
             if not platformkey:
                 code = 2
                 break
@@ -126,7 +128,7 @@ def user_login(request):
         if result['lock']:
             code = 6
         else:
-            ret = _get_account_server(result['uid'], result['lastserver'], get_country_code(ip))
+            ret = _get_account_server(result['uid'], result.get('loginid', LOGIN_ID), result.get('lastserver', 0), get_country_code(ip))
             curtime = int(time.time())
             ret.update({
                 'bind': result['platform'],
@@ -139,21 +141,21 @@ def user_login(request):
     ret.update({
         'code': code,
         'platform': platform,
+        'idcard': idcard,
+        'minor': minor,
     })
     '''code：0成功，1没有设备号，2平台验证失败，3不识别平台，4服务器繁忙，5ip被封，6账号被封'''
     return JsonResponse(ret)
 
 
-def _get_account_server(account, sid, country):
-    login = get_login_config(LOGIN_ID)
-    '''
+def _get_account_server(account, loginid, sid, country):
+    login = get_login_config(loginid)
     if sid == 0:
-        res = requests.get('http://{0}:{1}/last_server'.format(login['http_host'], login_http_port(LOGIN_ID)), params={
+        res = requests.get('http://{0}:{1}/last_server'.format(login['http_host'], login_http_port(login['loginid'])), params={
             'account': account,
         })
         if res.status_code == requests.codes.ok:
             sid = int(res.text)
-    '''
     if sid == 0:
         pool = get_country_weight(country)
         if len(pool) > 0:

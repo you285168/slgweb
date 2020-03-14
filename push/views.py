@@ -3,12 +3,11 @@ from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import PushDevice
 from django.core.cache import cache
-from urllib.parse import unquote, urlencode
 import json
 import requests
-from webaccount.models import WebAccount
 import logging
 from webaccount.account import get_account_device
+from django.conf import settings
 
 # Create your views here.
 
@@ -131,17 +130,17 @@ def test_push(request):
 def broadcast_push(request):
     code = 0
     while True:
-        accounts = request.GET.get('accounts', None)
+        accounts = request.POST.get('accounts', None)
         if accounts:
-            accounts = json.loads(unquote(accounts))
-        package = request.GET.get('package', None)
+            accounts = json.loads(accounts)
+        package = request.POST.get('package', None)
         if package:
-            package = json.loads(unquote(package))
-        excludes = request.GET.get('excludes', None)
+            package = json.loads(package)
+        excludes = request.POST.get('excludes', None)
         if excludes:
-            excludes = json.loads(unquote(excludes))
-        broadcast = request.GET.get('allflag', None)
-        sid = request.GET.get('serverid', None)
+            excludes = json.loads(excludes)
+        broadcast = request.POST.get('allflag', None)
+        sid = request.POST.get('serverid', None)
         result = None
         if broadcast:
             if excludes and len(excludes) > 0:
@@ -149,7 +148,7 @@ def broadcast_push(request):
                 result = PushDevice.objects.filter(serverid=sid).exclude(device__in=devices)
             else:
                 result = PushDevice.objects.filter(serverid=sid)
-        elif len(accounts) > 0:
+        elif accounts and len(accounts) > 0:
             devices = get_account_device(accounts)
             result = _get_cache_tokens(sid, devices)
         else:
@@ -192,7 +191,7 @@ def _raw_push_message(push_token, title, text, push_type):
         'Authorization': 'key=' + PUSH_KEY,
         'Content-Type': 'application/json',
     }
-    proxies = {'http': '127.0.0.1:1080', 'https': '127.0.0.1:1080'}
+    proxies = settings.REQUEST_PROXIES
     data = {
         'registration_ids': push_token,
         'data': {  # android

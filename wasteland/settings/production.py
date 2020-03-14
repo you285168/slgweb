@@ -6,6 +6,9 @@ SECRET_KEY = 'ff6h42^=o)xwa)hq!62j!)b8f%qn+*nl$6ooc@@k-)w%7ycj83'    # os.enviro
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+REQUEST_PROXIES = None
+BACK_STAGE = "192.168.1.5:9002"
+
 ALLOWED_HOSTS = ['*']
 
 # Database

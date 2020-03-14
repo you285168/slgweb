@@ -31,13 +31,13 @@ def baidu_translate(text, language):
     res = requests.post(BAIDU_URL, data=args)
     data = {}
     ret = json.loads(res.content)
-    if ret['error_code']:
+    if not ret or 'error_code' in ret:
         logger.warning('baidu translate error {0}', res.content)
     else:
         data['from'] = ret['from']
         data['to'] = ret['to']
         if ret["trans_result"] and ret["trans_result"][0]["dst"]:
-            data['text'] = ret['trans_result']
+            data['text'] = ret['trans_result'][0]["dst"]
         else:
             data['text'] = text
     return data

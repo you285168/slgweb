@@ -1,16 +1,17 @@
 from django.core.cache import cache
 import requests
 import json
+from django.conf import settings
 
 LOGIN_WEIGHT = "login:weight"
-WEIGHT_URL = "http://192.168.1.5:9002/index.php/Api/maintain/dealData"
+WEIGHT_URL = "http://{0}/index.php/Api/maintain/dealData"
 CACHE_TIME = 60 * 60
 
 
 def get_country_weight(country):
     data = cache.get(LOGIN_WEIGHT)
     if not data:
-        res = requests.get(WEIGHT_URL)
+        res = requests.get(WEIGHT_URL.format(settings.BACK_STAGE))
         data = json.loads(res.text)
         cache.set(LOGIN_WEIGHT, data, CACHE_TIME)
     pool = {}

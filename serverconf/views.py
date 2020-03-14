@@ -63,20 +63,32 @@ def all_server_dbconfig(request):
     return JsonResponse(ret)
 
 
+def _get_game_data(obj):
+    data = to_dict(obj, exclude=('id',))
+    data['worldid'] = data['world']['worldid']
+    data['loginid'] = data['login']['loginid']
+    data['gate'] = {
+        'network_ip': data['network_ip'],
+        'network_port': data['network_port'],
+    }
+    data.pop('world')
+    data.pop('login')
+    return data
+
+
 def get_game_list(request):
     sid = request.GET.get('serverid', None)
     ret = []
     if not sid:
         objs = GameConfig.objects.all()
         for obj in objs:
-            ret.append(to_dict(obj, exclude=('id',)))
+            ret.append(_get_game_data(obj))
     else:
         try:
             obj = GameConfig.objects.get(serverid=sid)
-            ret.append(to_dict(obj, exclude=('id',)))
+            ret.append(_get_game_data(obj))
         except ObjectDoesNotExist:
             pass
-    print(ret)
     return JsonResponse(ret, safe=False)
 
 

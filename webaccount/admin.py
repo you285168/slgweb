@@ -58,8 +58,8 @@ class WebAccountAdmin(admin.ModelAdmin):
         from django.conf.urls import url
         urls = [
             url('^(?P<pk>\d+)uuid/?$', self.admin_site.admin_view(self.create_uuid), name='create_uuid'),
-            url('^(?P<pk>\d+)lockuid/?$', self.admin_site.admin_view(self.lock_uid), name='lock_uid'),
-            url('^(?P<pk>\d+)unlockuid/?$', self.admin_site.admin_view(self.unlock_uid), name='unlock_uid'),
+            url('^(?P<pk>\w+)lockuid/?$', self.admin_site.admin_view(self.lock_uid), name='lock_uid'),
+            url('^(?P<pk>\w+)unlockuid/?$', self.admin_site.admin_view(self.unlock_uid), name='unlock_uid'),
         ]
         return urls + super(WebAccountAdmin, self).get_urls()
 

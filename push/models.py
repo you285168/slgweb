@@ -4,7 +4,7 @@ from django.db import models
 
 
 class PushDevice(models.Model):
-    device = models.CharField(db_index=True, max_length=64)
+    device = models.CharField(primary_key=True, max_length=64)
     token = models.CharField(max_length=255)
     language = models.CharField(max_length=64)
     serverid = models.IntegerField(default=0)

@@ -1,5 +1,5 @@
 from .cachext import add_page_cache, clear_page_cache
-from .middleware import global_request
+from common.middleware.global_request import global_request
 from urllib.parse import quote
 from hashlib import md5
 from django.db.models.fields import DateTimeField

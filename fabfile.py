@@ -18,19 +18,20 @@ def _get_github_auth_responders():
     return [username_responder, password_responder]
 
 
-def _raw_deploy_task(c, conf_path, root_path, program):
+def _raw_deploy_task(c, conf_path, root_path, program, *, only_file=False):
     # 进入项目根目录，从 Git 拉取最新代码
     with c.cd(root_path):
         cmd = 'git pull'
         responders = _get_github_auth_responders()
         c.run(cmd, watchers=responders)
 
-    # 安装依赖，迁移数据库，收集静态文件
-    with c.cd(root_path):
-        c.run('pipenv install --deploy --ignore-pipfile')
-        c.run('pipenv run python manage.py makemigrations')
-        c.run('pipenv run python manage.py migrate')
-        c.run('pipenv run python manage.py collectstatic --noinput')
+    if not only_file:
+        # 安装依赖，迁移数据库，收集静态文件
+        with c.cd(root_path):
+            c.run('pipenv install --deploy --ignore-pipfile')
+            c.run('pipenv run python manage.py makemigrations')
+            c.run('pipenv run python manage.py migrate')
+            c.run('pipenv run python manage.py collectstatic --noinput')
 
     # 重新启动应用
     with c.cd(conf_path):
@@ -62,3 +63,16 @@ def deploy_feimi(c):
 
     project_root_path = '/home/pyweb'
     _raw_deploy_task(c, supervisor_conf_path, project_root_path, supervisor_program_name)
+
+
+@task()
+def deploy_feimi_file(c):
+    """
+    feimi 内网192.168.1.5 pyweb only file
+    """
+    c = Connection('192.168.1.5:22', user='root', connect_kwargs={"password": "RXozGdpWcyCfzk1X"})
+    supervisor_conf_path = '/home/pyweb'
+    supervisor_program_name = 'wasteland'
+
+    project_root_path = '/home/pyweb'
+    _raw_deploy_task(c, supervisor_conf_path, project_root_path, supervisor_program_name, only_file=True)

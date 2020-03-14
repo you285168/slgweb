@@ -8,3 +8,5 @@ from .models import PushDevice
 class PushDeviceAdmin(admin.ModelAdmin):
     list_display = ('device', 'token', 'language', 'serverid')
     list_editable = ['token', 'language', 'serverid']
+
+    search_fields = ('device', )  # 搜索字段

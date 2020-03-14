@@ -3,7 +3,8 @@ from .models import DBConfig, WorldConfig, LoginConfig, GameConfig
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.safestring import mark_safe
 from django.forms.models import model_to_dict
-from .interface import _clear_login_cache, _clear_game_cache, game_network_port
+from .interface import _clear_game_cache, _clear_login_cache
+from .interface import *
 from common import get_admin_url, get_url_params
 
 # Register your models here.
@@ -60,13 +61,18 @@ class GameConfigAdmin(admin.ModelAdmin):
             pass
         else:  # 新增的时候
             pass
-        _clear_game_cache(obj.pk)
         super(GameConfigAdmin, self).save_model(request, obj, form, change)
+        _clear_game_cache(obj.pk)
+        reload_config(obj.http_host, game_http_port(obj.serverid))
+        reload_login_config()
+        reload_world_config()
 
     def delete_model(self, request, obj):
         """  删除时触发 """
         _clear_game_cache(obj.pk)
         super(GameConfigAdmin, self).delete_model(request, obj)
+        reload_login_config()
+        reload_world_config()
 
     # 允许您在渲染之前轻松自定义响应数据。（凡是对单条数据操作的定制，都可以通过这个方法配合实现）
     def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -134,6 +140,7 @@ class LoginConfigAdmin(admin.ModelAdmin):
         else:  # 新增的时候
             pass
         _clear_login_cache(obj.pk)
+        reload_config(obj.http_host, obj.loginid)
         super(LoginConfigAdmin, self).save_model(request, obj, form, change)
 
     def delete_model(self, request, obj):
@@ -153,6 +160,7 @@ class WorldConfigAdmin(admin.ModelAdmin):
             pass
         else:  # 新增的时候
             pass
+        reload_config(obj.http_host, obj.worldid)
         super(WorldConfigAdmin, self).save_model(request, obj, form, change)
 
     def delete_model(self, request, obj):
