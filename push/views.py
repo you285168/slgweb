@@ -205,5 +205,8 @@ def _raw_push_message(push_token, title, text, push_type):
             'sound': 'default',
         },
     }
-    res = requests.post(url, json=data, headers=headers, proxies=proxies)
-    logger.warning('push message ret: {0}'.format(res.content))
+    try:
+        res = requests.post(url, json=data, headers=headers, proxies=proxies)
+        logger.warning('push message ret: {0}'.format(res.content))
+    except Exception as e:
+        logger.warning(str(e))
