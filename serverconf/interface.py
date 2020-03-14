@@ -69,7 +69,7 @@ def game_network_port(sid):
 
 def reload_config(host, port):
     try:
-        res = requests.get('http://{0}:{1}/reloadconfig'.format(host, port))
+        res = requests.get('http://{0}:{1}/reloadconfig'.format(host, port), timeout=0.5)
         if res.status_code != requests.codes.ok:
             logger.warning('{0} error: {1}'.format(requests.get_full_path(), res.content))
     except Exception as e:
