@@ -18,23 +18,24 @@ class GameConfigAdmin(admin.ModelAdmin):
     list_display_links = ('serverid',)
 
     # listdisplay设置要显示在列表中的字段（id字段是Django模型的默认主键）
-    list_display = ('serverid', 'world', 'login', 'colored_status', 'network_ip', 'network_port', 'http_host', 'dbc_player', 'arenaid', 'copy_current_data')
+    list_display = ('serverid', 'world', 'login', 'colored_status', 'network_ip', 'network_port', 'http_host',
+                    'dbc_player', 'arenaid', 'heroarena', 'warbanner', 'copy_current_data')
 
     # list_per_page设置每页显示多少条记录，默认是100条
     list_per_page = 50
 
     # ordering设置默认排序字段，负号表示降序排序
-    ordering = ('-serverid',)
+    ordering = ('serverid',)
 
     # list_editable 设置默认可编辑字段
-    list_editable = ['dbc_player', 'network_ip', 'network_port', 'arenaid', 'world']
+    list_editable = ['dbc_player', 'network_ip', 'network_port', 'arenaid', 'heroarena', 'warbanner', 'world', 'login']
 
     # fk_fields 设置显示外键字段
-    # fk_fields = ('dbc_log',)
+    fk_fields = ('world', 'login')
 
     # 筛选器
     # list_filter = ('dbc_player', )  # ManyToManyField多对多字段用过滤器过滤器
-    search_fields = ('serverid',)          # 搜索字段
+    search_fields = ('serverid', 'arenaid', 'heroarena', 'warbanner')          # 搜索字段
     # date_hierarchy = 'go_time'      # 详细时间分层筛选　
 
     # 可以用fields或exclude控制显示或者排除的字段，二选一即可

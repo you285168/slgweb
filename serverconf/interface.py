@@ -68,9 +68,12 @@ def game_network_port(sid):
 
 
 def reload_config(host, port):
-    res = requests.get('http://{0}:{1}/reloadconfig'.format(host, port))
-    if res.status_code != requests.codes.ok:
-        logger.warning('{0} error: {1}'.format(requests.get_full_path(), res.content))
+    try:
+        res = requests.get('http://{0}:{1}/reloadconfig'.format(host, port))
+        if res.status_code != requests.codes.ok:
+            logger.warning('{0} error: {1}'.format(requests.get_full_path(), res.content))
+    except Exception as e:
+        pass
 
 
 def reload_login_config():
