@@ -49,7 +49,7 @@ class LoginConfig(models.Model):
 
 class GameConfig(models.Model):
     serverid = models.IntegerField(default=0)
-    servername = models.CharField(max_length=64, default='')
+    servername = models.CharField(max_length=64, default='', blank=True)
     world = models.ForeignKey(WorldConfig, on_delete=models.PROTECT)
     login = models.ForeignKey(LoginConfig, on_delete=models.PROTECT)
     network_ip = models.CharField(max_length=64)
@@ -59,8 +59,8 @@ class GameConfig(models.Model):
     dbc_log = models.ForeignKey(DBConfig, null=True, blank=True, on_delete=models.PROTECT, related_name="game_log")
     dbc_global = models.ForeignKey(DBConfig, null=True, blank=True, on_delete=models.PROTECT, related_name="game_global")
     status = models.IntegerField(default=1)
-    appver = models.CharField(max_length=64, default='1.0.0')
-    resver = models.CharField(max_length=64, default='1.0.0')
+    appver = models.CharField(max_length=64, default='1.0.0', blank=True)
+    resver = models.CharField(max_length=64, default='1.0.0', blank=True)
     arenaid = models.IntegerField(default=0)
     heroarena = models.IntegerField(default=0)
     warbanner = models.IntegerField(default=0)

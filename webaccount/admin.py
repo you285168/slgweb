@@ -10,9 +10,9 @@ from common import get_admin_url, get_url_params
 
 @admin.register(WebAccount)
 class WebAccountAdmin(admin.ModelAdmin):
-    list_display = ('uid', 'device', 'lastdevice', 'xindong', 'create_new_uuid', 'lock_and_unlock')
+    list_display = ('uid', 'device', 'lastdevice', 'xindong', 'loginid', 'create_new_uuid', 'lock_and_unlock')
     list_display_links = ('uid', )
-    list_editable = ['device', 'xindong']
+    list_editable = ['device', 'xindong', 'loginid']
     search_fields = ('uid', 'device', 'xindong')  # 搜索字段
     list_filter = ('lock',)
 

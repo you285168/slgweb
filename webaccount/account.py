@@ -34,7 +34,7 @@ def get_account_device(accounts):
 def clear_account_cache(obj):
     param = ['uid', 'device']
     param[2:] = iter(PLATFORM)
-    keys = {k: v for k, v in model_to_dict(obj, fields=param).items() if len(v) > 0}
+    keys = {k: v for k, v in model_to_dict(obj, fields=param).items() if v and len(v) > 0}
     for key, value in keys.items():
         cachekey = key + value
         cache.delete(cachekey)

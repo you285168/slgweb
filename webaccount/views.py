@@ -128,7 +128,7 @@ def user_login(request):
         if result['lock']:
             code = 6
         else:
-            ret = _get_account_server(result['uid'], result.get('login', LOGIN_ID), result.get('lastserver', 0), get_country_code(ip))
+            ret = _get_account_server(result['uid'], result.get('loginid', LOGIN_ID), result.get('lastserver', 0), get_country_code(ip))
             curtime = int(time.time())
             ret.update({
                 'bind': result['platform'],
