@@ -16,7 +16,7 @@ def game_config(request):
     gamelist = {}
     objs = GameConfig.objects.all()
     for obj in objs:
-        if obj.pk == sid:
+        if obj.serverid == sid:
             data = to_dict(obj, exclude=('id',))
         gamelist[obj.serverid] = to_dict(obj, fields=(
             'network_ip',
