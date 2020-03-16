@@ -52,7 +52,7 @@ def _charge_ship(obj):
 
 
 def _pay_logic(platform, param):
-    order_key = ORDER + param['order_id']
+    order_key = (ORDER + param['order_id']).replace(' ', '_')
     if cache.get(order_key):
         return
     cache.set(order_key, 1, CACHE_TIME)
@@ -147,13 +147,13 @@ def charge_player(request):
 
 
 def request_charge(sid, uid):
-    charge_key = CHARGE + uid
+    charge_key = (CHARGE + uid).replace(' ', '_')
     if cache.get(charge_key):
         return
     objs = ChargeOrder.objects.filter(serverid=sid, account=uid, status=0)
     result = True
     for obj in objs:
-        order_key = ORDER + obj.order_id
+        order_key = (ORDER + obj.order_id).replace(' ', '_')
         if not cache.get(order_key):
             cache.set(order_key, 1, CACHE_TIME)
             if not _charge_ship(obj):

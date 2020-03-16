@@ -36,7 +36,7 @@ def clear_account_cache(obj):
     param[2:] = iter(PLATFORM)
     keys = {k: v for k, v in model_to_dict(obj, fields=param).items() if v and len(v) > 0}
     for key, value in keys.items():
-        cachekey = key + value
+        cachekey = (key + value).replace(' ', '_')
         cache.delete(cachekey)
 
 
@@ -74,7 +74,7 @@ def _get_account_detail(obj):
 
 def get_cache_account(**kwargs):
     for key, value in kwargs.items():
-        cachekey = key + str(value)
+        cachekey = (key + str(value)).replace(' ', '_')
         break
     data = cache.get(cachekey)
     if not data:

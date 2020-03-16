@@ -42,13 +42,17 @@ PUSH_LANGUAGE = {       #推送语言
 }
 
 
+def _get_push_key(device):
+    return (PUSH_KEY + device).replace(' ', '_')
+
+
 def _get_cache_device(device):
-    push_key = PUSH_KEY + device
+    push_key = _get_push_key(device)
     return cache.get(push_key)
 
 
 def _set_cache_device(obj):
-    push_key = PUSH_KEY + obj.device
+    push_key = _get_push_key(obj.device)
     cache.set(push_key, {
         'device': obj.device,
         'token': obj.token,
@@ -58,7 +62,7 @@ def _set_cache_device(obj):
 
 
 def _remove_cache_device(device):
-    push_key = PUSH_KEY + device
+    push_key = _get_push_key(device)
     cache.delete(push_key)
 
 

@@ -23,7 +23,6 @@ def index(request):
 
 def get_cache(request, key):
     value = cache.get(key)
-    print(value)
     return HttpResponse(value)
 
 
