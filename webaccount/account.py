@@ -17,16 +17,18 @@ def get_account_device(accounts):
         # 针对单人的进行cache缓存
         uid = accounts[0]
         data = get_cache_account(uid=uid)
-        if data['lastdevice'] and data['lastdevice'] != '':
-            devices.append(data['lastdevice'])
-        else:
-            devices.append(data['device'])
+        if data:
+            device = data.get('lastdevice', '')
+            if device == '':
+                device = data.get('device', '')
+            if device != '':
+                devices.append(device)
     else:
         objs = WebAccount.objects.filter(uid__in=accounts)
         for obj in objs:
             if obj.lastdevice and obj.lastdevice != '':
                 devices.append(obj.lastdevice)
-            else:
+            elif obj.device and obj.device != '':
                 devices.append(obj.device)
     return devices
 
