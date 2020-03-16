@@ -38,7 +38,7 @@ def enter_game(request):
     uid = request.GET.get('account', None)
     sid = request.GET.get('serverid', None)
     playerid = request.GET.get('playerid', None)
-    name = request.GET.get('name', None)
+    name = request.GET.get('name', '')
     data = get_cache_account(uid=uid)
     platform = {}
     if data:

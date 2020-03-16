@@ -74,7 +74,7 @@ def _pay_logic(platform, param):
 
 
 def xindong_pay(request):
-    product_id = request.GET.get('product_id', None)
+    product_id = request.GET.get('productid', None)
     sign = request.GET.get('sign', None)
     sid = request.GET.get('server_id', None)
     mark = request.GET.get('mark', None)
@@ -83,6 +83,7 @@ def xindong_pay(request):
     pay_way = request.GET.get('pay_way', None)
 
     code = 0
+    print(product_id, sign, sid, uid, order)
     if not product_id or not sign or not sid or not uid or not order:
         code = 2
     else:

@@ -52,19 +52,19 @@ def _clear_game_cache(sid):
 
 
 def login_http_port(sid):
-    return 9000 + (sid % 100) * 10 + 3
+    return 9000 + (int(sid) % 100) * 10 + 3
 
 
 def world_http_port(sid):
-    return 9000 + (sid % 100) * 10 + 8
+    return 9000 + (int(sid) % 100) * 10 + 8
 
 
 def game_http_port(sid):
-    return 10000 + (sid % 1000) * 10 + 3
+    return 10000 + (int(sid) % 1000) * 10 + 3
 
 
 def game_network_port(sid):
-    return 10000 + (sid % 1000) * 10 + 2
+    return 10000 + (int(sid) % 1000) * 10 + 2
 
 
 def reload_config(host, port):

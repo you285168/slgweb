@@ -119,6 +119,8 @@ EMAIL_SUBJECT_PREFIX = 'wasteland'  # 为邮件标题的前缀,默认是'[django
 EMAIL_USE_TLS = True  # 开启安全链接
 DEFAULT_FROM_EMAIL = SERVER_EMAIL = EMAIL_HOST_USER  # 设置发件人
 
+import django.utils.log
+
 LOGGING = {
     'version': 1,   # 指明dictConnfig的版本，目前就只有一个版本
     'disable_existing_loggers': False,   # 禁用所有的已经存在的日志配置
@@ -151,9 +153,11 @@ LOGGING = {
         },
         'file_handler': {   # 文件处理器，所有高于(包括)debug的消息会被传到
             'level': 'WARNING',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'standard',
             'filename': os.path.join(BASE_DIR, "log", 'debug.log'),     # 日志输出文件
+            'maxBytes': 1024*1024*1024,    # class参数如果日志大小超了会新建文件
+            'backupCount': 30,  # 备份份数
          },
         'console': {     # 流处理器(控制台)，所有的高于(包括)debug的消息会被传到stderr，使用的是simple格式器
             'level': 'INFO',
