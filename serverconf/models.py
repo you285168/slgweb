@@ -12,7 +12,7 @@ class DBConfig(models.Model):
     dbname = models.CharField(max_length=64)
 
     class Meta:
-        verbose_name_plural = "数据库配置"
+        verbose_name_plural = "————"
 
     def __str__(self):
         return self.dbname

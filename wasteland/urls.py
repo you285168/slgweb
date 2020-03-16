@@ -35,6 +35,7 @@ urlpatterns = [
     # 兼容之前
     path('accountserver.php', webaccount.views.user_login),
     path('playerlogin.php', webaccount.views.enter_game),
+    path('delaccount', webaccount.views.delete_account),
     path('bindaccount.php', webaccount.views.bind_account),     #
     path('servercfg.php', serverconf.views.game_config),
     path('allserverdbcfg', serverconf.views.all_server_dbconfig),
@@ -54,7 +55,7 @@ urlpatterns = [
     path('islockaccount.php', webaccount.views.is_account_lock),
     path('lockaccount.php', webaccount.views.lock_account),
     path('accountoflock.php', webaccount.views.get_lock_account),
-    path('islockip.php', webaccount.views.is_lockip),   #
-    path('ipoflock.php', webaccount.views.lockip_list),     #
-    path('lockip.php', webaccount.views.lock_ip),   #
+    path('islockip.php', webaccount.views.is_lockip),
+    path('ipoflock.php', webaccount.views.lockip_list),
+    path('lockip.php', webaccount.views.lock_ip),
 ]

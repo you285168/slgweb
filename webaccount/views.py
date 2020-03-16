@@ -25,6 +25,21 @@ TAP_DB = [
 ]
 
 
+def delete_account(request):
+    uid = request.GET.get('account', None)
+    code = 0
+    if uid:
+        try:
+            obj = WebAccount.objects.get(uid=uid)
+            obj.uid = create_uuid()
+            obj.save()
+            clear_account_cache(obj)
+            code = 1
+        except ObjectDoesNotExist:
+            pass
+    return HttpResponse(code)
+
+
 def account_test(request):
     uid = request.GET.get('account', None)
     obj = WebAccount.objects.get(uid=uid)
@@ -248,12 +263,28 @@ def get_lock_account(request):
 
 
 def is_lockip(request):
-    pass
+    ip = request.GET.get('ip', None)
+    code = 0
+    if is_lock_ip(ip):
+        code = 1
+    return HttpResponse(code)
 
 
 def lockip_list(request):
-    pass
+    ips = get_lock_ip() or []
+    return JsonResponse(list(ips), safe=False)
 
 
 def lock_ip(request):
-    pass
+    ip = request.GET.get('ip', None)
+    flag = request.GET.get('flag', 0)
+    code = 0
+    lock = (flag != 0)
+    if lock:
+        if not is_lock_ip(ip):
+            add_lock_ip(ip)
+    else:
+        if is_lock_ip(ip):
+            del_lock_ip(ip)
+    return HttpResponse(code)
+

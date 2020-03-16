@@ -100,3 +100,12 @@ def add_lock_ip(ip):
     ips.add(ip)
     cache.set(LOCK_IP, ips, LOCK_TIME)
 
+
+def del_lock_ip(ip):
+    ips = get_lock_ip()
+    if ips and ip in ips:
+        ips.remove(ip)
+        if len(ips) <= 0:
+            cache.delete(LOCK_IP)
+        else:
+            cache.set(LOCK_IP, ips, LOCK_TIME)
