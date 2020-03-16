@@ -18,7 +18,7 @@ class GameConfigAdmin(admin.ModelAdmin):
     list_display_links = ('serverid',)
 
     # listdisplay设置要显示在列表中的字段（id字段是Django模型的默认主键）
-    list_display = ('serverid', 'world', 'login', 'colored_status', 'network_ip', 'network_port', 'http_host',
+    list_display = ('serverid', 'world', 'login', 'colored_status', 'http_host',
                     'dbc_player', 'arenaid', 'heroarena', 'warbanner', 'copy_current_data')
 
     # list_per_page设置每页显示多少条记录，默认是100条
@@ -28,7 +28,7 @@ class GameConfigAdmin(admin.ModelAdmin):
     ordering = ('serverid',)
 
     # list_editable 设置默认可编辑字段
-    list_editable = ['dbc_player', 'network_ip', 'network_port', 'arenaid', 'heroarena', 'warbanner', 'world', 'login']
+    list_editable = ['dbc_player', 'arenaid', 'heroarena', 'warbanner', 'world', 'login']
 
     # fk_fields 设置显示外键字段
     fk_fields = ('world', 'login')
